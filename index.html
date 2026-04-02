@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emochi Churn Analysis</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #FAFBFD;
+  --surface: #FFFFFF;
+  --surface-alt: #F4F6FA;
+  --text: #1A1D26;
+  --text-secondary: #5A6075;
+  --text-muted: #9098B1;
+  --accent: #6366F1;
+  --accent-light: #818CF8;
+  --accent-bg: #EEF2FF;
+  --danger: #EF4444;
+  --danger-light: #FEE2E2;
+  --success: #10B981;
+  --success-light: #D1FAE5;
+  --warning: #F59E0B;
+  --warning-light: #FEF3C7;
+  --blue: #3B82F6;
+  --blue-light: #DBEAFE;
+  --border: #E5E7EB;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 24px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Slide Container ── */
+.deck {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4vh 6vw;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(30px);
+  transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.slide.exit-up {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+/* ── Typography ── */
+h1 {
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 0.4em;
+}
+
+h2 {
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin-bottom: 0.5em;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5em;
+}
+
+.subtitle {
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  color: var(--text-secondary);
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 48ch;
+}
+
+.label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── Cover ── */
+.cover {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(160deg, #FAFBFD 0%, #EEF2FF 50%, #F0FDF4 100%);
+}
+
+.cover h1 {
+  font-size: clamp(2.8rem, 5vw, 4.5rem);
+  background: linear-gradient(135deg, var(--accent), #8B5CF6, var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cover .subtitle { max-width: 52ch; margin: 0 auto; }
+
+.cover-meta {
+  margin-top: 2rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cover-meta span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+/* ── Grids ── */
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.card-accent {
+  border-left: 3px solid var(--accent);
+}
+
+.card-danger { border-left: 3px solid var(--danger); }
+.card-success { border-left: 3px solid var(--success); }
+.card-warning { border-left: 3px solid var(--warning); }
+
+/* ── Stat Blocks ── */
+.stat {
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+.stat-value {
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 0.25em;
+}
+
+.stat-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.stat-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.3em;
+}
+
+/* ── Chart Bars ── */
+.bar-chart { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bar-label {
+  width: 100px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 28px;
+  background: var(--surface-alt);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+  width: 0;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+}
+
+.bar-fill span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+}
+
+.bar-fill.accent { background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
+.bar-fill.danger { background: linear-gradient(90deg, var(--danger), #F87171); }
+.bar-fill.success { background: linear-gradient(90deg, var(--success), #34D399); }
+.bar-fill.warning { background: linear-gradient(90deg, var(--warning), #FBBF24); }
+.bar-fill.blue { background: linear-gradient(90deg, var(--blue), #60A5FA); }
+
+.bar-value {
+  font-size: 0.78rem;
+  font-weight: 600;
+  min-width: 50px;
+  flex-shrink: 0;
+}
+
+/* ── Donut Chart (CSS only) ── */
+.donut-wrap { display: flex; align-items: center; gap: 1.5rem; }
+
+.donut {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.donut::after {
+  content: attr(data-label);
+  position: absolute;
+  inset: 25%;
+  background: var(--surface);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.donut-legend { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+
+.donut-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ── Comparison Table ── */
+.comp-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.85rem;
+}
+
+.comp-table thead th {
+  background: var(--surface-alt);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border);
+}
+
+.comp-table thead th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+.comp-table thead th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+
+.comp-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.comp-table tbody tr:hover { background: var(--surface-alt); }
+
+.comp-table .highlight { font-weight: 700; color: var(--accent); }
+.comp-table .danger { color: var(--danger); font-weight: 600; }
+.comp-table .success { color: var(--success); font-weight: 600; }
+
+/* ── Timeline ── */
+.timeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  height: 3px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.timeline-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+
+.timeline-dot.active {
+  background: var(--accent);
+  color: white;
+}
+
+.timeline-dot.danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.timeline-dot.danger.active {
+  background: var(--danger);
+  color: white;
+}
+
+.timeline-text {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  max-width: 140px;
+  line-height: 1.4;
+}
+
+/* ── Insight callout ── */
+.insight {
+  background: var(--accent-bg);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.insight-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 0.1em;
+}
+
+.insight.danger-bg {
+  background: var(--danger-light);
+}
+
+.insight.success-bg {
+  background: var(--success-light);
+}
+
+.insight.warning-bg {
+  background: var(--warning-light);
+}
+
+/* ── Quote block ── */
+.quote-block {
+  border-left: 3px solid var(--accent);
+  padding: 0.8rem 1.2rem;
+  background: var(--surface-alt);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0.5rem 0;
+}
+
+/* ── Tags ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2em 0.7em;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  gap: 0.3em;
+}
+
+.tag-accent { background: var(--accent-bg); color: var(--accent); }
+.tag-danger { background: var(--danger-light); color: var(--danger); }
+.tag-success { background: var(--success-light); color: var(--success); }
+.tag-warning { background: var(--warning-light); color: #92400E; }
+
+/* ── User story card ── */
+.user-story {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.user-story-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.user-story-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15em; }
+
+.user-story p { font-size: 0.85rem; line-height: 1.55; color: var(--text-secondary); }
+
+/* ── Navigation ── */
+.nav-bar {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 0.5rem 1rem;
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  padding: 0;
+}
+
+.nav-dot.active {
+  background: var(--accent);
+  width: 24px;
+  border-radius: 4px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+  font-size: 1.1rem;
+}
+
+.nav-btn:hover { color: var(--text); }
+
+.slide-counter {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  min-width: 36px;
+  text-align: center;
+}
+
+/* ── Animated entrance ── */
+.anim-in {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.slide.active .anim-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide.active .anim-in:nth-child(1) { transition-delay: 0.1s; }
+.slide.active .anim-in:nth-child(2) { transition-delay: 0.2s; }
+.slide.active .anim-in:nth-child(3) { transition-delay: 0.3s; }
+.slide.active .anim-in:nth-child(4) { transition-delay: 0.4s; }
+.slide.active .anim-in:nth-child(5) { transition-delay: 0.5s; }
+.slide.active .anim-in:nth-child(6) { transition-delay: 0.6s; }
+
+/* ── Recommendation list ── */
+.rec-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+
+.rec-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.rec-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.rec-content h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.2em;
+}
+
+.rec-content p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-2, .grid-2-1 { grid-template-columns: 1fr; }
+  .slide { padding: 3vh 4vw; }
+}
+
+/* ── Sparkle animation ── */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(99,102,241,0.3); }
+  70% { box-shadow: 0 0 0 10px rgba(99,102,241,0); }
+  100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+}
+
+.pulse { animation: pulse-ring 2s ease-out infinite; }
+
+/* ── Gradient text ── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), #8B5CF6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Scroll indicator shapes ── */
+.shape-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+/* ── Progress bar top ── */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), #8B5CF6);
+  transition: width 0.4s ease;
+  z-index: 200;
+}
+
+/* ── Flow diagram ── */
+.flow-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.flow-box {
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-align: center;
+  min-width: 100px;
+}
+
+.flow-arrow {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin: 0 0.3rem;
+}
+
+/* section label top */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  margin-bottom: 1rem;
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="deck" id="deck">
+
+<!-- ═══════ SLIDE 0: Cover ═══════ -->
+<div class="slide cover active" data-slide="0">
+  <div class="anim-in">
+    <p class="label" style="margin-bottom:0.5rem;">Emochi Data Team / 2026-04-02</p>
+    <h1>付费用户流失分析</h1>
+    <p class="subtitle">基于 StarRocks 行为数据 + Tianji 用户反馈 + Paimon 聊天记录的全链路归因</p>
+  </div>
+  <div class="cover-meta anim-in">
+    <span><strong>1,388</strong>&nbsp;付费用户样本</span>
+    <span><strong>3</strong>&nbsp;数据源交叉验证</span>
+    <span><strong>6</strong>&nbsp;个体深度访谈</span>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 1: Three Cohorts ═══════ -->
+<div class="slide" data-slide="1">
+  <div class="anim-in">
+    <span class="section-label"><span class="label">01</span><span class="tag tag-accent">用户画像</span></span>
+    <h2>三个截然不同的群体</h2>
+  </div>
+  <div class="grid-3 anim-in" style="margin-top:1rem;">
+    <div class="card card-danger">
+      <p class="label" style="color:var(--danger);">D0-3 即时取消</p>
+      <div class="stat-value" style="color:var(--danger);font-size:2.4rem;margin:0.5rem 0;">663</div>
+      <p class="stat-sub" style="font-size:0.82rem;color:var(--text-secondary);">人 &middot; 48%</p>
+      <div style="margin-top:1rem;display:flex;flex-direction:column;gap:0.4rem;">
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span>平均聊天</span><span class="mono" style="font-weight:600;">1,677</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span>活跃天数</span><span class="mono" style="font-weight:600;">14.7d</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span>平均 Bot 数</span><span class="mono" style="font-weight:600;">46</span>
+        </div>
+      </div>
+    </div>
+    <div class="card card-warning">
+      <p class="label" style="color:var(--warning);">D31 月底取消</p>
+      <div class="stat-value" style="color:var(--warning);font-size:2.4rem;margin:0.5rem 0;">177</div>
+      <p class="stat-sub" style="font-size:0.82rem;color:var(--text-secondary);">人 &middot; 13%</p>
+      <div style="margin-top:1rem;display:flex;flex-direction:column;gap:0.4rem;">
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span>平均聊天</span><span class="mono" style="font-weight:600;">4,685</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span>活跃天数</span><span class="mono" style="font-weight:600;">34.1d</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span>平均 Bot 数</span><span class="mono" style="font-weight:600;">93</span>
+        </div>
+      </div>
+    </div>
+    <div class="card card-success">
+      <p class="label" style="color:var(--success);">Retained 60d+</p>
+      <div class="stat-value" style="color:var(--success);font-size:2.4rem;margin:0.5rem 0;">548</div>
+      <p class="stat-sub" style="font-size:0.82rem;color:var(--text-secondary);">人 &middot; 39%</p>
+      <div style="margin-top:1rem;display:flex;flex-direction:column;gap:0.4rem;">
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span>平均聊天</span><span class="mono" style="font-weight:600;">3,093</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span>活跃天数</span><span class="mono" style="font-weight:600;">28.2d</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span>平均 Bot 数</span><span class="mono" style="font-weight:600;">70</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="insight anim-in" style="margin-top:1.2rem;">
+    <span class="insight-icon">&#9889;</span>
+    <div>D0-3 取消者并非"没用就跑"——平均 1,677 次聊天。<strong>D31 是最重度用户</strong>，聊天量比留存用户还高 50%。</div>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 2: D0 Myth Busted ═══════ -->
+<div class="slide" data-slide="2">
+  <div class="anim-in">
+    <span class="section-label"><span class="label">02</span><span class="tag tag-danger">颠覆认知</span></span>
+    <h2>D0 即时取消 ≠ 不满意</h2>
+    <p class="subtitle">这不是"即时后悔"，而是精明的订阅管理行为</p>
+  </div>
+  <div class="grid-3 anim-in" style="margin-top:1.5rem;">
+    <div class="card" style="text-align:center;">
+      <div class="stat-value" style="color:var(--accent);">88%</div>
+      <p class="stat-label">同日取消者有 100+ 次聊天</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="stat-value" style="color:var(--accent);">56%</div>
+      <p class="stat-label">取消后继续活跃 7+ 天</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="stat-value" style="color:var(--accent);">2%</div>
+      <p class="stat-label">真正的零活动取消</p>
+    </div>
+  </div>
+  <div class="anim-in" style="margin-top:1.5rem;">
+    <div class="flow-row">
+      <div class="flow-box" style="background:var(--accent-bg);color:var(--accent);">订阅</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box" style="background:var(--danger-light);color:var(--danger);">立刻取消自动续费</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box" style="background:var(--success-light);color:#065F46;">继续使用到过期</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box" style="background:var(--surface-alt);color:var(--text-secondary);">变回免费用户</div>
+    </div>
+  </div>
+  <div class="insight warning-bg anim-in">
+    <span class="insight-icon">&#128161;</span>
+    <div>这是 Apple/Google 订阅生态里常见的用户行为。<strong>这个群体不是产品问题，是续费意愿问题。</strong></div>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 3: Error Rate ═══════ -->
+<div class="slide" data-slide="3">
+  <div class="anim-in">
+    <span class="section-label"><span class="label">03</span><span class="tag tag-danger">体验质量</span></span>
+    <h2>错误率：D31 的隐形杀手</h2>
+  </div>
+  <div class="grid-2 anim-in" style="margin-top:1rem;">
+    <div class="card">
+      <h3>错误率分布</h3>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">D0-3</span>
+          <div class="bar-track"><div class="bar-fill accent" data-width="36"><span>18% &gt;5%err</span></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="color:var(--danger);font-weight:700;">D31</span>
+          <div class="bar-track"><div class="bar-fill danger" data-width="56"><span>28% &gt;5%err</span></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Retained</span>
+          <div class="bar-track"><div class="bar-fill success" data-width="46"><span>23% &gt;5%err</span></div></div>
+        </div>
+      </div>
+      <table class="comp-table" style="margin-top:1rem;">
+        <thead><tr><th></th><th>Mean</th><th>Median</th><th>P75</th></tr></thead>
+        <tbody>
+          <tr><td>D0-3</td><td>3.4%</td><td>1.5%</td><td>3.6%</td></tr>
+          <tr><td class="danger">D31</td><td class="danger">4.9%</td><td class="danger">3.2%</td><td class="danger">5.5%</td></tr>
+          <tr><td>Retained</td><td>3.6%</td><td>1.4%</td><td>4.2%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>对话深度 (msg/conv)</h3>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">D0-3</span>
+          <div class="bar-track"><div class="bar-fill accent" data-width="59"><span>44.6</span></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="color:var(--warning);font-weight:700;">D31</span>
+          <div class="bar-track"><div class="bar-fill warning" data-width="100"><span>75.0</span></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Retained</span>
+          <div class="bar-track"><div class="bar-fill success" data-width="92"><span>68.9</span></div></div>
+        </div>
+      </div>
+      <div style="margin-top:1rem;">
+        <h3>深度对话 (50+ msg) 占比</h3>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <span class="bar-label">D0-3</span>
+            <div class="bar-track"><div class="bar-fill accent" data-width="50"><span>21%</span></div></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">D31</span>
+            <div class="bar-track"><div class="bar-fill warning" data-width="100"><span>42%</span></div></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Retained</span>
+            <div class="bar-track"><div class="bar-fill success" data-width="69"><span>29%</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="insight danger-bg anim-in">
+    <span class="insight-icon">&#9888;&#65039;</span>
+    <div>D31 对话最深（75 msg）、42% 有深度对话——<strong>在 200+ 条消息的剧情高潮遇到 error，体验打断感是致命的。</strong></div>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 4: Bot Discovery ═══════ -->
+<div class="slide" data-slide="4">
+  <div class="anim-in">
+    <span class="section-label"><span class="label">04</span><span class="tag tag-warning">Bot 匹配</span></span>
+    <h2>找不到"对的 Bot"是流失加速器</h2>
+  </div>
+  <div class="grid-2 anim-in" style="margin-top:1rem;">
+    <div class="card">
+      <h3>Bot 使用分散度</h3>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">D0-3</span>
+          <div class="bar-track"><div class="bar-fill accent" data-width="57"><span>39% 分散</span></div></div>
+          <span class="bar-value">avg 34 bots</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="color:var(--danger);font-weight:700;">D31</span>
+          <div class="bar-track"><div class="bar-fill danger" data-width="100"><span>69% 分散</span></div></div>
+          <span class="bar-value danger" style="color:var(--danger);">avg 107 bots</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Retained</span>
+          <div class="bar-track"><div class="bar-fill success" data-width="88"><span>61% 分散</span></div></div>
+          <span class="bar-value">avg 76 bots</span>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;">
+        <h3>Top-3 Bot 集中度</h3>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <span class="bar-label">D0-3</span>
+            <div class="bar-track"><div class="bar-fill accent" data-width="100"><span>64%</span></div></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label" style="color:var(--danger);">D31</span>
+            <div class="bar-track"><div class="bar-fill danger" data-width="64"><span>41%</span></div></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Retained</span>
+            <div class="bar-track"><div class="bar-fill success" data-width="73"><span>47%</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div class="stat-value" style="font-size:3rem;color:var(--danger);">107</div>
+        <p class="stat-label">D31 用户平均尝试的 Bot 数</p>
+        <p class="stat-sub">vs 留存用户的 76 个</p>
+      </div>
+      <div class="insight danger-bg" style="margin-top:0;">
+        <span class="insight-icon">&#128270;</span>
+        <div>D31 用户疯狂试 bot 但集中度最低——推荐系统没有帮他们找到匹配的 bot。</div>
+      </div>
+      <div class="insight success-bg" style="margin-top:0.5rem;">
+        <span class="insight-icon">&#10004;&#65039;</span>
+        <div>留存用户形成了"探索→锁定→深耕"的健康模式——Top-3 集中度 47%。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 5: D31 Decay ═══════ -->
+<div class="slide" data-slide="5">
+  <div class="anim-in">
+    <span class="section-label"><span class="label">05</span><span class="tag tag-warning">Engagement 衰减</span></span>
+    <h2>D31：从热恋到分手的 31 天</h2>
+  </div>
+  <div class="grid-2 anim-in" style="margin-top:1rem;">
+    <div class="card">
+      <h3>聊天量变化</h3>
+      <div style="display:flex;align-items:flex-end;gap:2rem;margin:1.5rem 0;justify-content:center;">
+        <div style="text-align:center;">
+          <div style="width:80px;background:linear-gradient(180deg,var(--warning),#FBBF24);border-radius:8px 8px 0 0;height:180px;"></div>
+          <p style="font-size:0.78rem;font-weight:600;margin-top:0.5rem;">首周</p>
+          <p class="mono" style="font-size:1.1rem;font-weight:700;">1,139</p>
+        </div>
+        <div style="text-align:center;color:var(--text-muted);font-size:1.5rem;padding-bottom:3rem;">&#8594;</div>
+        <div style="text-align:center;">
+          <div style="width:80px;background:linear-gradient(180deg,#FDE68A,#FEF3C7);border:2px dashed var(--warning);border-radius:8px 8px 0 0;height:92px;"></div>
+          <p style="font-size:0.78rem;font-weight:600;margin-top:0.5rem;">末周</p>
+          <p class="mono" style="font-size:1.1rem;font-weight:700;">582</p>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <span class="tag tag-danger" style="font-size:0.85rem;padding:0.3em 1em;">-49% 衰减</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>衰减分布</h3>
+      <div style="margin:1.5rem 0;">
+        <div class="bar-chart">
+          <div class="bar-row">
+            <span class="bar-label" style="width:120px;color:var(--danger);">衰减 (&lt;0.5)</span>
+            <div class="bar-track"><div class="bar-fill danger" data-width="100"><span>55%</span></div></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label" style="width:120px;">稳定 (0.5-1.5)</span>
+            <div class="bar-track"><div class="bar-fill blue" data-width="67"><span>37%</span></div></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label" style="width:120px;color:var(--success);">上升 (&gt;1.5)</span>
+            <div class="bar-track"><div class="bar-fill success" data-width="15"><span>8%</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="insight" style="margin-top:1rem;">
+        <span class="insight-icon">&#128200;</span>
+        <div>55% 的 D31 用户使用量在取消前已经腰斩。但 <strong>37% 保持稳定甚至末期依然活跃</strong>——他们可能因为价格或替代品离开。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 6: Product Reality ═══════ -->
+<div class="slide" data-slide="6">
+  <div class="anim-in">
+    <span class="section-label"><span class="label">06</span><span class="tag tag-accent">产品真相</span></span>
+    <h2>这不是聊天工具 —— 这是互动小说平台</h2>
+  </div>
+  <div class="grid-2 anim-in" style="margin-top:1rem;">
+    <div>
+      <div class="card" style="margin-bottom:1rem;">
+        <h3>6 / 6 采样用户 = 100% 角色扮演</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+          没有一个用户在做通用 AI 对话、写代码或问问题。全部在做 RP（角色扮演）互动故事。
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem;">
+          <span class="tag tag-accent">浪漫幻想</span>
+          <span class="tag tag-accent">中世纪</span>
+          <span class="tag tag-accent">校园</span>
+          <span class="tag tag-accent">犯罪</span>
+          <span class="tag tag-accent">超自然</span>
+          <span class="tag tag-accent">粉丝同人</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>主要语言</h3>
+        <div class="bar-chart" style="margin-top:0.5rem;">
+          <div class="bar-row">
+            <span class="bar-label">俄语</span>
+            <div class="bar-track"><div class="bar-fill accent" data-width="80"><span>主要</span></div></div>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">英语</span>
+            <div class="bar-track"><div class="bar-fill blue" data-width="70"><span>主要</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="background:linear-gradient(135deg,#EEF2FF,#F5F3FF);border:none;margin-bottom:1rem;">
+        <h3 style="font-size:1rem;">这意味着：</h3>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.75rem;">
+          <div style="display:flex;gap:0.6rem;align-items:flex-start;">
+            <span style="font-size:1rem;">&#127912;</span>
+            <p style="font-size:0.85rem;line-height:1.5;">模型质量评价标准是<strong>创意性和角色一致性</strong>，不是准确性</p>
+          </div>
+          <div style="display:flex;gap:0.6rem;align-items:flex-start;">
+            <span style="font-size:1rem;">&#128148;</span>
+            <p style="font-size:0.85rem;line-height:1.5;">错误影响被放大 —— 中断 200 条消息的剧情比中断一个问答<strong>严重 10 倍</strong></p>
+          </div>
+          <div style="display:flex;gap:0.6rem;align-items:flex-start;">
+            <span style="font-size:1rem;">&#128150;</span>
+            <p style="font-size:0.85rem;line-height:1.5;">用户留存 = <strong>角色/故事粘性</strong>，不是功能粘性</p>
+          </div>
+        </div>
+      </div>
+      <div class="quote-block">
+        "单个 conversation 常有 200+ 条消息。用户写长段落，发展复杂剧情。这是深度情感投入。"
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 7: User Stories ═══════ -->
+<div class="slide" data-slide="7">
+  <div class="anim-in">
+    <span class="section-label"><span class="label">07</span><span class="tag tag-accent">真实用户</span></span>
+    <h2>三个人，三种结局</h2>
+  </div>
+  <div class="grid-3 anim-in" style="margin-top:1rem;align-items:start;">
+    <div class="user-story" style="border-top:3px solid var(--danger);">
+      <div class="user-story-header">
+        <div class="user-avatar" style="background:linear-gradient(135deg,var(--danger),#F87171);">Cx</div>
+        <div>
+          <h3 style="margin:0;font-size:0.88rem;">高投入创作者</h3>
+          <p class="user-story-meta">D31 &middot; 44.4% 错误率 &middot; Plus</p>
+        </div>
+      </div>
+      <p>3,063 次聊天。俄语 RP——女罪犯 vs 警探的复杂剧情，文学品质高。用 kaon-v1。</p>
+      <div class="insight danger-bg" style="margin-top:0.75rem;font-size:0.78rem;">
+        <span class="insight-icon">&#128148;</span>
+        <div>几乎每两次聊天就有一次出错。坚持了 31 天，最终还是放弃了。<strong>这是最可惜的流失。</strong></div>
+      </div>
+    </div>
+    <div class="user-story" style="border-top:3px solid var(--warning);">
+      <div class="user-story-header">
+        <div class="user-avatar" style="background:linear-gradient(135deg,var(--warning),#FBBF24);">VR</div>
+        <div>
+          <h3 style="margin:0;font-size:0.88rem;">试吃型用户</h3>
+          <p class="user-story-meta">D0 &middot; 35,226 chats &middot; 803 bots</p>
+        </div>
+      </div>
+      <p>订阅当天取消。但累计 35k 次聊天、803 个 bot。全是恋爱 RP，深夜活跃。</p>
+      <div class="insight warning-bg" style="margin-top:0.75rem;font-size:0.78rem;">
+        <span class="insight-icon">&#128161;</span>
+        <div>典型"预取消"用户。不断尝鲜但没建立粘性——<strong>推荐系统的失败。</strong></div>
+      </div>
+    </div>
+    <div class="user-story" style="border-top:3px solid var(--success);">
+      <div class="user-story-header">
+        <div class="user-avatar" style="background:linear-gradient(135deg,var(--success),#34D399);">gb</div>
+        <div>
+          <h3 style="margin:0;font-size:0.88rem;">教科书留存</h3>
+          <p class="user-story-meta">Retained 85d &middot; 0.4% err &middot; Plus</p>
+        </div>
+      </div>
+      <p>30,389 次聊天。Day 1 探索 34 个对话，一个月后只用一个 Supernatural 粉丝向 bot，反复 reset 重玩。</p>
+      <div class="insight success-bg" style="margin-top:0.75rem;font-size:0.78rem;">
+        <span class="insight-icon">&#10004;&#65039;</span>
+        <div>找到了"自己的 bot"。0.4% 错误率几乎无感。<strong>这就是 PMF 在个体层面的样子。</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 8: Tianji Feedback ═══════ -->
+<div class="slide" data-slide="8">
+  <div class="anim-in">
+    <span class="section-label"><span class="label">08</span><span class="tag tag-accent">用户反馈</span></span>
+    <h2>Tianji: 2,577 条付费用户反馈</h2>
+  </div>
+  <div class="grid-2 anim-in" style="margin-top:1rem;">
+    <div class="card">
+      <h3>Top Bug 类型</h3>
+      <div class="bar-chart" style="margin-top:0.5rem;">
+        <div class="bar-row">
+          <span class="bar-label" style="width:150px;">连接/加载错误</span>
+          <div class="bar-track"><div class="bar-fill danger" data-width="100"><span>536 (20.8%)</span></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="width:150px;">订阅/账单</span>
+          <div class="bar-track"><div class="bar-fill warning" data-width="58"><span>309 (12.0%)</span></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="width:150px;">图片生成</span>
+          <div class="bar-track"><div class="bar-fill blue" data-width="53"><span>285 (11.1%)</span></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="width:150px;">模型切换失败</span>
+          <div class="bar-track"><div class="bar-fill accent" data-width="32"><span>174 (6.8%)</span></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="width:150px;">回复质量差</span>
+          <div class="bar-track"><div class="bar-fill accent" data-width="27"><span>144 (5.6%)</span></div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="width:150px;">记忆/Brain 消失</span>
+          <div class="bar-track"><div class="bar-fill accent" data-width="25"><span>135 (5.2%)</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>各群体反馈率</h3>
+      <div style="display:flex;gap:1.5rem;margin:1.5rem 0;justify-content:center;">
+        <div style="text-align:center;">
+          <div class="stat-value" style="font-size:1.8rem;">32%</div>
+          <p class="stat-sub">D0-3</p>
+        </div>
+        <div style="text-align:center;">
+          <div class="stat-value" style="font-size:1.8rem;color:var(--warning);">55%</div>
+          <p class="stat-sub">D31</p>
+        </div>
+        <div style="text-align:center;">
+          <div class="stat-value" style="font-size:1.8rem;">44%</div>
+          <p class="stat-sub">Retained</p>
+        </div>
+      </div>
+      <div class="insight" style="margin-top:1rem;">
+        <span class="insight-icon">&#128172;</span>
+        <div>D31 反馈率最高 (55%)。这些人遇到问题会反馈——<strong>但问题没得到解决，他们还是走了。</strong></div>
+      </div>
+      <div class="quote-block" style="margin-top:0.75rem;">
+        案例：用户 G7r — 33,953 次聊天中有 1,799 次 send error。这不是偶发，是系统性故障。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 9: Recommendations ═══════ -->
+<div class="slide" data-slide="9">
+  <div class="anim-in">
+    <span class="section-label"><span class="label">09</span><span class="tag tag-success">行动建议</span></span>
+    <h2>三个优先级</h2>
+  </div>
+  <div class="grid-3 anim-in" style="margin-top:1rem;align-items:start;">
+    <div class="card" style="border-top:3px solid var(--danger);">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+        <span class="tag tag-danger">P0</span>
+        <h3 style="margin:0;">错误率治理</h3>
+      </div>
+      <ul class="rec-list" style="list-style:none;">
+        <li class="rec-item" style="padding:0.6rem;">
+          <div class="rec-content">
+            <p><strong>receive_timeout</strong> 和 <strong>receive_error</strong> 是主要错误类型</p>
+          </div>
+        </li>
+        <li class="rec-item" style="padding:0.6rem;">
+          <div class="rec-content">
+            <p>重点治理<strong>长 context RP 会话</strong>中的错误——剧情中断影响极大</p>
+          </div>
+        </li>
+        <li class="rec-item" style="padding:0.6rem;">
+          <div class="rec-content">
+            <p>目标：将 &gt;5% 错误率用户占比从 28% 降到 15%</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--warning);">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+        <span class="tag tag-warning">P1</span>
+        <h3 style="margin:0;">Bot 推荐优化</h3>
+      </div>
+      <ul class="rec-list" style="list-style:none;">
+        <li class="rec-item" style="padding:0.6rem;">
+          <div class="rec-content">
+            <p>D31 用户试 <strong>107 个 bot</strong>——推荐系统没有帮他们找到匹配</p>
+          </div>
+        </li>
+        <li class="rec-item" style="padding:0.6rem;">
+          <div class="rec-content">
+            <p>首周主动推荐高匹配度 RP bot，减少用户探索成本</p>
+          </div>
+        </li>
+        <li class="rec-item" style="padding:0.6rem;">
+          <div class="rec-content">
+            <p>建立"Bot-User 匹配度"指标——深度对话 = 好匹配</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+        <span class="tag" style="background:var(--blue-light);color:var(--blue);">P2</span>
+        <h3 style="margin:0;">续费挽留</h3>
+      </div>
+      <ul class="rec-list" style="list-style:none;">
+        <li class="rec-item" style="padding:0.6rem;">
+          <div class="rec-content">
+            <p>Cancel flow 提示"订阅 X 日到期，此前仍可使用"</p>
+          </div>
+        </li>
+        <li class="rec-item" style="padding:0.6rem;">
+          <div class="rec-content">
+            <p>到期前 3 天推送<strong>最佳体验回忆</strong>——"你创造了 XX 个故事"</p>
+          </div>
+        </li>
+        <li class="rec-item" style="padding:0.6rem;">
+          <div class="rec-content">
+            <p>提供"到期取消"替代"立即取消"选项</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SLIDE 10: Closing ═══════ -->
+<div class="slide cover" data-slide="10">
+  <div class="anim-in">
+    <p class="label" style="margin-bottom:1rem;">核心结论</p>
+    <h1 style="font-size:clamp(1.8rem,3.5vw,2.8rem);">留存的关键：<br><span class="gradient-text">找到"自己的 Bot"+ 低错误率</span></h1>
+    <p class="subtitle" style="margin:1rem auto 0;">留存用户的教科书模式：<br/>首日大量探索 → 首周找到 1-3 个核心 Bot → 长期反复使用</p>
+  </div>
+  <div class="grid-3 anim-in" style="margin-top:2rem;max-width:800px;margin-left:auto;margin-right:auto;">
+    <div class="card" style="text-align:center;">
+      <div class="stat-value" style="font-size:1.6rem;color:var(--success);">47%</div>
+      <p class="stat-sub">留存用户 Top-3 集中度</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="stat-value" style="font-size:1.6rem;color:var(--success);">0.4%</div>
+      <p class="stat-sub">教科书用户错误率</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="stat-value" style="font-size:1.6rem;color:var(--success);">85d</div>
+      <p class="stat-sub">并且仍在继续</p>
+    </div>
+  </div>
+  <div class="anim-in" style="margin-top:2rem;text-align:center;">
+    <p style="font-size:0.82rem;color:var(--text-muted);">Emochi Data Team &middot; 2026-04-02 &middot; 数据截至 2026-03-31</p>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous">&#8249;</button>
+  <div id="navDots"></div>
+  <span class="slide-counter" id="slideCounter">1/11</span>
+  <button class="nav-btn" id="nextBtn" aria-label="Next">&#8250;</button>
+</nav>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  // Build nav dots
+  const dotsContainer = document.getElementById('navDots');
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  });
+
+  const dots = dotsContainer.querySelectorAll('.nav-dot');
+  const counter = document.getElementById('slideCounter');
+  const progress = document.getElementById('progressBar');
+
+  function goTo(n) {
+    if (n < 0 || n >= total || n === current) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add(n > current ? 'exit-up' : '');
+    dots[current].classList.remove('active');
+
+    setTimeout(() => {
+      slides[current].classList.remove('exit-up');
+      current = n;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+      counter.textContent = (current + 1) + '/' + total;
+      progress.style.width = ((current / (total - 1)) * 100) + '%';
+      animateBars();
+    }, 80);
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  // Touch swipe
+  let touchStart = 0;
+  document.addEventListener('touchstart', e => { touchStart = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const diff = touchStart - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { diff > 0 ? next() : prev(); }
+  });
+
+  // Animate bars when slide becomes active
+  function animateBars() {
+    const activeSlide = slides[current];
+    activeSlide.querySelectorAll('.bar-fill').forEach(bar => {
+      const w = bar.getAttribute('data-width');
+      if (w) {
+        bar.style.width = '0';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            bar.style.width = w + '%';
+          });
+        });
+      }
+    });
+  }
+
+  // Initial
+  animateBars();
+  progress.style.width = '0%';
+})();
+</script>
+
+</body>
+</html>
