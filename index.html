@@ -287,589 +287,957 @@ p.body strong { color: var(--text); font-weight: 600; }
 <div class="progress" id="progressBar"></div>
 <div class="deck" id="deck">
 
-<!-- ═══ 0 COVER ═══ -->
+<!-- SLIDE 0: Cover -->
 <div class="slide cover active" data-slide="0">
-  <div class="anim">
-    <p class="slide-num">Emochi Data Team &mdash; April 2, 2026</p>
-    <h1>付费用户流失分析<br><i>全链路归因报告</i></h1>
-    <p class="lead mt-2">基于 StarRocks 行为数据、Tianji 用户反馈与 Paimon 聊天记录三个数据源的交叉验证分析。覆盖 2026 年 1 月以来首次订阅的 <strong>1,388 名付费用户</strong>，从宏观漏斗到微观个体旅程，还原流失的真实原因。</p>
+  <div class="slide-num">00 — 概览</div>
+  <h2 class="serif" style="font-size:2.6rem;line-height:1.25;max-width:780px">
+    付费用户流失分析<br><i>全链路归因报告</i>
+  </h2>
+  <p class="lead mt-2" style="max-width:640px">
+    基于 StarRocks + Tianji + Paimon 三数据源交叉验证。1,388 付费用户样本，覆盖订阅全生命周期行为数据，从首日激活到长期留存的完整行为链路追踪。
+  </p>
+  <div class="divider"></div>
+  <div class="row mt-2">
+    <div class="col">
+      <div class="big-num">1,388</div>
+      <div class="caption">付费用户样本</div>
+    </div>
+    <div class="col">
+      <div class="big-num">3</div>
+      <div class="caption">交叉验证数据源</div>
+    </div>
+    <div class="col">
+      <div class="big-num">6</div>
+      <div class="caption">个体深度访谈</div>
+    </div>
   </div>
-  <div class="row mt-3 anim" style="max-width:600px;gap:3rem;">
-    <div>
-      <p class="big-num">1,388</p>
-      <p class="caption mt-1">付费用户样本</p>
-    </div>
-    <div>
-      <p class="big-num">3</p>
-      <p class="caption mt-1">数据源交叉</p>
-    </div>
-    <div>
-      <p class="big-num">6</p>
-      <p class="caption mt-1">个体深度访谈</p>
-    </div>
-  </div>
+  <p class="detail mt-3" style="max-width:600px">
+    本报告聚焦两个核心断崖——D0 即时取消与 D31 到期流失，通过行为数据、错误日志、模型使用偏好的多维归因，揭示流失背后的真实动因与反直觉发现。
+  </p>
 </div>
 
-<!-- ═══ 1 THREE COHORTS ═══ -->
+<!-- SLIDE 1: 生存曲线 -->
 <div class="slide" data-slide="1">
-  <p class="slide-num anim">01 &mdash; 用户分群</p>
-  <h2 class="anim">三个截然不同的群体，<i>三种行为模式</i></h2>
-  <p class="body anim">通过订阅-取消时间间隔将用户自然分为三个群体。直觉上"即时取消=不满意"的假设被数据完全颠覆——D0-3 群体平均有 1,677 次聊天互动，远非"用了不喜欢就走"。</p>
+  <div class="slide-num">01 — 生存曲线</div>
+  <h2 class="serif"><i>两个断崖</i>：D0 与 D31 的双峰流失结构</h2>
+  <p class="body mt-1">
+    自 2026 年 1 月起共 2,100 名订阅用户进入队列，其中 1,549 人已取消（流失率 73.8%），551 人仍处于活跃订阅状态。生存曲线呈现出极为鲜明的双断崖结构——并非平滑衰减，而是集中在两个时间窗口急剧下降。
+  </p>
 
-  <div class="grid-3 mt-2 anim">
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
-        <span class="tag tag-red">D0-3</span>
-        <span style="font-size:0.78rem;color:var(--text-3);">即时取消</span>
-      </div>
-      <p class="big-num" style="color:var(--red);">663</p>
-      <p class="caption">人 &middot; 占总样本 48%</p>
-      <hr class="divider">
-      <table class="tbl">
-        <tr><td>平均聊天</td><td class="em" style="text-align:right;">1,677 次</td></tr>
-        <tr><td>活跃天数</td><td class="em" style="text-align:right;">14.7 天</td></tr>
-        <tr><td>平均 Bot 数</td><td class="em" style="text-align:right;">46 个</td></tr>
-        <tr><td>错误率 &gt;5% 占比</td><td style="text-align:right;">18%</td></tr>
-      </table>
-      <p class="detail mt-1">订阅后 0-3 天内取消。但 88% 有 100+ 次聊天，56% 取消后仍继续使用 7+ 天。<strong>这不是不满意，是提前关闭自动续费的精明消费行为。</strong></p>
-    </div>
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
-        <span class="tag tag-amber">D31</span>
-        <span style="font-size:0.78rem;color:var(--text-3);">月底取消</span>
-      </div>
-      <p class="big-num" style="color:var(--amber);">177</p>
-      <p class="caption">人 &middot; 占总样本 13%</p>
-      <hr class="divider">
-      <table class="tbl">
-        <tr><td>平均聊天</td><td class="em" style="text-align:right;">4,685 次</td></tr>
-        <tr><td>活跃天数</td><td class="em" style="text-align:right;">34.1 天</td></tr>
-        <tr><td>平均 Bot 数</td><td class="em" style="text-align:right;">93 个</td></tr>
-        <tr><td>错误率 &gt;5% 占比</td><td class="red" style="text-align:right;">28%</td></tr>
-      </table>
-      <p class="detail mt-1">用满一个月后取消。这是<strong>最重度用户群体</strong>——聊天量比留存用户高 50%，但 28% 的人遭遇严重错误率。他们不是因为不用而走，是被体验问题逼走的。</p>
-    </div>
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
-        <span class="tag tag-green">Retained</span>
-        <span style="font-size:0.78rem;color:var(--text-3);">60d+ 留存</span>
-      </div>
-      <p class="big-num" style="color:var(--green);">548</p>
-      <p class="caption">人 &middot; 占总样本 39%</p>
-      <hr class="divider">
-      <table class="tbl">
-        <tr><td>平均聊天</td><td class="em" style="text-align:right;">3,093 次</td></tr>
-        <tr><td>活跃天数</td><td class="em" style="text-align:right;">28.2 天</td></tr>
-        <tr><td>平均 Bot 数</td><td class="em" style="text-align:right;">70 个</td></tr>
-        <tr><td>错误率 &gt;5% 占比</td><td style="text-align:right;">23%</td></tr>
-      </table>
-      <p class="detail mt-1">持续付费 60 天以上。反而使用量最少——<strong>"适度使用"比"重度使用"更健康。</strong>他们找到了自己的核心 bot，形成了稳定的使用习惯。</p>
-    </div>
-  </div>
-
-  <div class="callout callout-warm mt-2 anim">
-    <span class="callout-icon">&rarr;</span>
-    <div class="detail">关键发现：使用量与留存不是正相关。D31 用量最高却流失了，Retained 用量反而最低。<strong>决定留存的不是"用了多少"，而是"用得好不好"。</strong></div>
-  </div>
-</div>
-
-<!-- ═══ 2 D0 MYTH ═══ -->
-<div class="slide" data-slide="2">
-  <p class="slide-num anim">02 &mdash; D0-3 深度分析</p>
-  <h2 class="anim">即时取消 ≠ 不满意，<i>这是订阅管理行为</i></h2>
-
-  <div class="row mt-2 anim">
+  <div class="row mt-2">
     <div class="col-2">
-      <p class="body">我们对 D0 同日取消的 434 人做了逐一排查。<strong>仅 2% 是真正的零活动取消。</strong>绝大多数用户在取消后继续活跃地使用产品——他们只是第一时间关闭了自动续费，然后继续享用剩余订阅期内的权益。</p>
-
-      <p class="body mt-2">这是 Apple/Google 订阅生态里典型的消费者行为。用户并非对产品不满，而是对"被自动扣费"这件事保持警惕。他们的实际行为模式：</p>
-
-      <div class="flow mt-2">
-        <div class="flow-step" style="background:var(--blue-bg);">订阅开通</div>
-        <span class="flow-arrow">&rarr;</span>
-        <div class="flow-step" style="background:var(--red-bg);">立刻取消自动续费</div>
-        <span class="flow-arrow">&rarr;</span>
-        <div class="flow-step" style="background:var(--green-bg);">继续使用到过期</div>
-        <span class="flow-arrow">&rarr;</span>
-        <div class="flow-step">变回免费用户</div>
+      <p class="caption" style="margin-bottom:.5rem">关键时间节点存活率</p>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">D0 · 79.3%</div><div class="bar-track"><div class="bar-fill fill-red anim" data-width="79"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D1 · 74.1%</div><div class="bar-track"><div class="bar-fill fill-red anim" data-width="74"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D7 · 63.2%</div><div class="bar-track"><div class="bar-fill fill-amber anim" data-width="63"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D14 · 54.1%</div><div class="bar-track"><div class="bar-fill fill-amber anim" data-width="54"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D21 · 47.4%</div><div class="bar-track"><div class="bar-fill fill-dark anim" data-width="47"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D30 · 39.3%</div><div class="bar-track"><div class="bar-fill fill-dark anim" data-width="39"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D31 · 34.1%</div><div class="bar-track"><div class="bar-fill fill-red anim" data-width="34"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D60 · ≈26%</div><div class="bar-track"><div class="bar-fill fill-muted anim" data-width="26"></div></div></div>
       </div>
-
-      <p class="body mt-2">因此，<strong>D0-3 群体的"取消"数据会严重误导我们对产品健康度的判断。</strong>他们不应被归入"流失"分析的核心对象。真正需要关注的是 D31 群体——那些用满了一个月、体验过完整的产品价值后选择离开的人。</p>
     </div>
     <div class="col">
-      <div class="card" style="text-align:center;margin-bottom:1rem;">
-        <p class="big-num" style="color:var(--text);">88%</p>
-        <p class="detail mt-1">同日取消者有 <strong>100+</strong> 次聊天<br>他们不是"用了不喜欢就走"</p>
+      <div class="card mt-1">
+        <p class="caption">Top-5 单日取消量</p>
+        <table class="tbl">
+          <tr><td class="em">D0</td><td class="red">434 人</td><td>最大单日跌幅</td></tr>
+          <tr><td class="em">D1</td><td>110 人</td><td>延迟管理行为</td></tr>
+          <tr><td class="em">D31</td><td class="red">79 人</td><td>到期第二波峰</td></tr>
+          <tr><td class="em">D2</td><td>73 人</td><td>早期试用退出</td></tr>
+          <tr><td class="em">D3</td><td>46 人</td><td>周末结算效应</td></tr>
+        </table>
       </div>
-      <div class="card" style="text-align:center;margin-bottom:1rem;">
-        <p class="big-num" style="color:var(--text);">56%</p>
-        <p class="detail mt-1">取消后继续活跃 <strong>7+ 天</strong><br>甚至比很多未取消用户更活跃</p>
-      </div>
-      <div class="card" style="text-align:center;">
-        <p class="big-num" style="color:var(--text);">2%</p>
-        <p class="detail mt-1">真正的零活动取消<br>几乎可以忽略不计</p>
+      <div class="callout callout-warm mt-1">
+        <p class="detail"><strong>Plus vs Ultra 几乎无差异</strong>：D31 时 Plus 存活 37.4% vs Ultra 38.2%，说明流失动因与价格层级无关，根源在产品体验而非定价策略。D60 后曲线趋平，稳定在 26–27%，代表真正的长期用户基数。</p>
       </div>
     </div>
   </div>
 
-  <div class="callout callout-amber mt-2 anim">
-    <span class="callout-icon">&rarr;</span>
-    <div class="detail"><strong>建议：</strong>在 cancel flow 中明确提示"你的订阅将在 X 日到期，此前仍可使用所有功能"；到期前 3 天推送体验回忆（"你在这 30 天里创造了 XX 个故事"）；提供"到期取消"替代"立即取消"选项，降低焦虑感。</div>
+  <div class="callout callout-red mt-2">
+    <p class="body"><strong>核心发现：双断崖分别对应两种完全不同的流失机制。</strong>D0–D3 是「订阅管理型」流失——用户订阅后立即取消自动续费，本质是试用心态而非不满；D31 是「产品幻灭型」流失——经过完整一个月的深度使用后做出的理性退出决策。两类人群需要截然不同的干预策略。</p>
   </div>
 </div>
 
-<!-- ═══ 3 ERROR RATE ═══ -->
-<div class="slide" data-slide="3">
-  <p class="slide-num anim">03 &mdash; 体验质量</p>
-  <h2 class="anim">错误率：D31 流失的<i>隐形杀手</i></h2>
+<!-- SLIDE 2: 三个群体画像 -->
+<div class="slide" data-slide="2">
+  <div class="slide-num">02 — 用户分群</div>
+  <h2 class="serif">三个群体画像：<i>行为数据全景</i></h2>
+  <p class="body mt-1">
+    将 1,388 名付费用户按流失时间分为三个群体。数据揭示了一个反常识的结论：D31 流失者的使用深度远超留存用户，这不是「用得少所以走」，而是「用得太多，期望落空」。
+  </p>
 
-  <div class="row mt-2 anim">
-    <div class="col">
-      <h3>错误率对比</h3>
+  <div class="grid-3 mt-2">
+    <div class="card">
+      <div class="tag tag-red">D0–D3 即时取消</div>
+      <div class="big-num-sm mt-1">189 人</div>
+      <p class="caption">Plus 126 · Ultra 63</p>
+      <div class="divider"></div>
       <table class="tbl">
-        <thead><tr><th></th><th>Mean</th><th>Median</th><th>P75</th><th>&gt;5% 占比</th></tr></thead>
-        <tbody>
-          <tr><td>D0-3</td><td>3.4%</td><td>1.5%</td><td>3.6%</td><td>18%</td></tr>
-          <tr><td class="red">D31</td><td class="red">4.9%</td><td class="red">3.2%</td><td class="red">5.5%</td><td class="red">28%</td></tr>
-          <tr><td>Retained</td><td>3.6%</td><td>1.4%</td><td>4.2%</td><td>23%</td></tr>
-        </tbody>
+        <tr><td>中位总聊天</td><td class="em">388</td></tr>
+        <tr><td>平均独立模型</td><td class="em">4.6</td></tr>
+        <tr><td>平均对话数</td><td class="em">49.6</td></tr>
+        <tr><td>每活跃日聊天</td><td class="em">88.1</td></tr>
+      </table>
+      <div class="divider"></div>
+      <p class="detail">Plus 均值 1,886 聊天 / Ultra 均值 1,254 聊天。这是三个群体中使用量最低的——但 88.1 的日均聊天说明他们并非完全不用，只是在免费额度范围内使用后决定不续费。</p>
+    </div>
+
+    <div class="card">
+      <div class="tag tag-amber">D31 到期流失</div>
+      <div class="big-num-sm mt-1">170 人</div>
+      <p class="caption">Plus 119 · Ultra 51</p>
+      <div class="divider"></div>
+      <table class="tbl">
+        <tr><td>中位总聊天</td><td class="em red">2,828</td></tr>
+        <tr><td>平均独立模型</td><td class="em red">7.1</td></tr>
+        <tr><td>平均对话数</td><td class="em red">104.3</td></tr>
+        <tr><td>每活跃日聊天</td><td class="em red">121.7</td></tr>
+      </table>
+      <div class="divider"></div>
+      <p class="detail">Plus 均值 4,538 / Ultra 均值 4,439 聊天，几乎持平。这是使用强度最高的群体——中位聊天量是留存用户的 2.2 倍，模型探索广度最高（7.1 个模型），每日强度也最大。他们不是沉默流失者。</p>
+    </div>
+
+    <div class="card">
+      <div class="tag tag-green">留存用户</div>
+      <div class="big-num-sm mt-1">188 人</div>
+      <p class="caption">Plus 117 · Ultra 71</p>
+      <div class="divider"></div>
+      <table class="tbl">
+        <tr><td>中位总聊天</td><td class="em">1,288</td></tr>
+        <tr><td>平均独立模型</td><td class="em">6.1</td></tr>
+        <tr><td>平均对话数</td><td class="em">85.6</td></tr>
+        <tr><td>每活跃日聊天</td><td class="em">93.8</td></tr>
+      </table>
+      <div class="divider"></div>
+      <p class="detail">Plus 均值 2,399 / Ultra 均值 4,055 聊天。留存用户的使用量反而居中——既不像 D0 那样冷淡，也不像 D31 那样狂热。他们找到了稳定的使用节奏，而非追求极限使用。</p>
+    </div>
+  </div>
+
+  <div class="callout callout-amber mt-2">
+    <p class="body"><strong>关键洞察：使用量与留存呈倒 U 型关系。</strong>最高使用强度的 D31 用户反而流失了，留存用户的使用量处于「甜蜜区间」。这暗示 D31 用户的高活跃可能源于反复尝试-失望的循环，而非满意的深度使用。模型探索数 7.1 vs 6.1 进一步印证了他们在「寻找更好体验」的焦虑行为。</p>
+  </div>
+</div>
+
+<!-- SLIDE 3: D0 即时取消 -->
+<div class="slide" data-slide="3">
+  <div class="slide-num">03 — D0 归因</div>
+  <h2 class="serif">D0 即时取消 <i>≠ 不满意</i></h2>
+  <p class="body mt-1">
+    434 人在 D0 当天取消订阅（占总流失的 28%），加上 D1–D3 的 229 人，早期取消共占流失总量的 42.8%。但行为数据表明，这不是产品失败——而是一种「订阅管理习惯」。
+  </p>
+
+  <div class="row mt-2">
+    <div class="col-2">
+      <div class="card-warm">
+        <p class="caption" style="margin-bottom:.3rem"><strong>42% 的 D0–D3 用户首日只使用了免费 Vanilla 模型</strong></p>
+        <p class="detail">他们订阅了付费服务，但从未体验过付费模型的差异化价值。这意味着接近一半的即时取消用户甚至没有给付费功能一个机会——他们可能在订阅的瞬间就设置了「到期不续费」，然后继续使用免费功能直到到期。</p>
+      </div>
+
+      <p class="caption mt-2" style="margin-bottom:.5rem">D0 取消者 vs 留存用户（首 7 日行为对比）</p>
+      <table class="tbl">
+        <tr><td></td><td class="em">D0 取消者</td><td class="em">留存用户</td><td class="em">差异</td></tr>
+        <tr><td>日均聊天</td><td>55.3</td><td>83.5</td><td class="red">−33.8%</td></tr>
+        <tr><td>日均 App 时长</td><td>8.2M ms</td><td>13.1M ms</td><td class="red">−36.8%</td></tr>
+        <tr><td>日均 Session 数</td><td>19.9</td><td>34.5</td><td class="red">−42.3%</td></tr>
+        <tr><td>零活跃天数</td><td>4.7</td><td>3.8</td><td class="red">+24.2%</td></tr>
+      </table>
+      <p class="detail mt-1">所有指标均显著低于留存用户，但并非归零。日均 55 条聊天说明他们仍在使用产品，只是决定不为此付费续订。零活跃天数更多（4.7 vs 3.8），说明使用不够规律。</p>
+    </div>
+
+    <div class="col">
+      <p class="caption" style="margin-bottom:.5rem">行为路径还原</p>
+      <div class="flow">
+        <div class="flow-step">订阅付费</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">立即取消自动续费</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">继续使用至到期</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">到期后转为免费用户</div>
+      </div>
+
+      <div class="callout callout-warm mt-2">
+        <p class="detail"><strong>这是「先试后决定」的订阅管理模式。</strong>用户在 Apple/Google 生态中养成的习惯：订阅后第一时间取消自动续费以避免遗忘扣费，然后在剩余有效期内评估产品价值。取消行为发生在体验之前，因此 D0 取消时间点不能反映产品满意度。</p>
+      </div>
+
+      <div class="callout callout-green mt-1">
+        <p class="detail"><strong>干预机会：</strong>这 42% 从未体验付费价值的用户是最容易挽回的群体。在取消后的 24 小时内，通过 onboarding 引导他们试用一次高质量付费模型，可能显著改变他们的评估结论。关键不是说服他们「别取消」，而是确保他们在做决定前至少体验过差异化价值。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: D31 反直觉数据 -->
+<div class="slide" data-slide="4">
+  <div class="slide-num">04 — D31 归因</div>
+  <h2 class="serif">D31 取消前的<i>反直觉数据</i></h2>
+  <p class="body mt-1">
+    传统流失模型假设「活跃度下降 → 流失」，但 D31 用户完全颠覆了这一假设。他们在取消前的最后一周，使用强度不降反升，远超留存用户同期水平。这是本次分析中最重要的反直觉发现。
+  </p>
+
+  <div class="row mt-2">
+    <div class="col-2">
+      <p class="caption" style="margin-bottom:.5rem">取消前 7 天行为对比：D31 流失者 vs 留存用户</p>
+      <table class="tbl">
+        <tr><td></td><td class="em">D31 流失者</td><td class="em">留存用户</td><td class="em">差异</td></tr>
+        <tr><td>日均聊天</td><td class="red">90.8</td><td>57.2</td><td class="red">+58.7%</td></tr>
+        <tr><td>日均 App 时长</td><td class="red">11.5M ms</td><td>7.1M ms</td><td class="red">+62.7%</td></tr>
+        <tr><td>日均 Session 数</td><td class="red">39.9</td><td>23.9</td><td class="red">+67.0%</td></tr>
+        <tr><td>零活跃天数</td><td class="em">2.0</td><td>3.6</td><td class="em">−44.8%</td></tr>
+        <tr><td>模型多样性</td><td class="red">2.92</td><td>2.05</td><td class="red">+42.6%</td></tr>
+        <tr><td>Bot 多样性</td><td class="red">2.93</td><td>2.10</td><td class="red">+39.6%</td></tr>
       </table>
 
-      <p class="detail mt-2">D31 群体在所有错误率指标上都是最差的：均值 4.9%、中位数 3.2%、P75 达 5.5%。<strong>28% 的 D31 用户每 100 次聊天遇到 5 次以上错误</strong>——在 RP 场景下，这意味着一个深度剧情对话中平均每 20 次互动就被中断一次。</p>
-
-      <p class="detail mt-1">主要错误类型是 <span class="mono">receive_timeout</span> 和 <span class="mono">receive_error</span>，集中在长 context 会话中。当用户在一个 200+ 条消息的角色扮演剧情高潮处遇到 error，其体验打断感比普通问答场景严重 10 倍以上——因为用户的情感投入不可重建。</p>
+      <div class="bar-group mt-2">
+        <p class="caption" style="margin-bottom:.3rem">最后 7 天日均聊天量对比</p>
+        <div class="bar-row"><div class="bar-label">D31 流失 · 90.8</div><div class="bar-track"><div class="bar-fill fill-red anim" data-width="100"></div></div></div>
+        <div class="bar-row"><div class="bar-label">留存用户 · 57.2</div><div class="bar-track"><div class="bar-fill fill-green anim" data-width="63"></div></div></div>
+      </div>
+      <div class="bar-group mt-1">
+        <p class="caption" style="margin-bottom:.3rem">最后 7 天日均 Session 数</p>
+        <div class="bar-row"><div class="bar-label">D31 流失 · 39.9</div><div class="bar-track"><div class="bar-fill fill-red anim" data-width="100"></div></div></div>
+        <div class="bar-row"><div class="bar-label">留存用户 · 23.9</div><div class="bar-track"><div class="bar-fill fill-green anim" data-width="60"></div></div></div>
+      </div>
     </div>
+
     <div class="col">
-      <h3>对话深度 (msg/conversation)</h3>
-      <div class="bar-group">
-        <div class="bar-row">
-          <span class="bar-label">D0-3</span>
-          <div class="bar-track"><div class="bar-fill fill-muted" data-width="59"><span>44.6</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="color:var(--amber);font-weight:600;">D31</span>
-          <div class="bar-track"><div class="bar-fill fill-amber" data-width="100"><span>75.0</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">Retained</span>
-          <div class="bar-track"><div class="bar-fill fill-green" data-width="92"><span>68.9</span></div></div>
-        </div>
+      <div class="card-solid">
+        <p class="body"><strong>D31 用户没有逐渐脱离产品。</strong></p>
+        <p class="detail mt-1">他们在取消前的最后一周几乎每天都在使用（仅 2.0 天零活跃 vs 留存的 3.6 天），每天发起近 40 次 Session，尝试近 3 个不同模型和 3 个不同 Bot。这不是「淡出」，而是「狂热使用」。</p>
       </div>
 
-      <h3 class="mt-2">深度对话 (&ge;50 msg) 占比</h3>
-      <div class="bar-group">
-        <div class="bar-row">
-          <span class="bar-label">D0-3</span>
-          <div class="bar-track"><div class="bar-fill fill-muted" data-width="50"><span>21%</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="color:var(--amber);font-weight:600;">D31</span>
-          <div class="bar-track"><div class="bar-fill fill-amber" data-width="100"><span>42%</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">Retained</span>
-          <div class="bar-track"><div class="bar-fill fill-green" data-width="69"><span>29%</span></div></div>
-        </div>
+      <div class="callout callout-red mt-2">
+        <p class="detail"><strong>两种可能的解释：</strong></p>
+        <ul class="bullets">
+          <li><strong>「最后的榨取」：</strong>已决定不续费，在到期前尽可能多地使用付费功能，提取最大价值。模型多样性飙升（+42.6%）支持这一假设——他们在系统性地尝试所有付费模型。</li>
+          <li><strong>「绝望的搜索」：</strong>对现有体验不满但尚未完全放弃，疯狂切换模型和 Bot 试图找到一个令人满意的体验。Bot 多样性飙升（+39.6%）支持这一假设。</li>
+        </ul>
       </div>
 
-      <p class="detail mt-2"><strong>D31 用户的对话是最深的</strong>（均 75 msg，42% 有 50+ msg 的深度对话）。他们是最投入的用户，也因此在错误面前最脆弱——剧情中断 = 情感断裂。</p>
+      <div class="callout callout-amber mt-1">
+        <p class="detail"><strong>与 D0–D3 形成完美镜像：</strong>D0 用户取消前活跃度低于留存用户（−33.8% 聊天），D31 用户取消前活跃度远高于留存用户（+58.7% 聊天）。两种流失机制的行为指纹完全相反——D0 是「没来得及用就走了」，D31 是「用得太多反而走了」。这要求完全不同的干预策略。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: 错误率深度分析 -->
+<div class="slide" data-slide="5">
+  <div class="slide-num">05 — 错误归因</div>
+  <h2 class="serif">错误率深度分析：<i>高峰与低谷并存</i></h2>
+  <p class="body mt-1">
+    95% 的 D31 用户在订阅期内遭遇过至少一次错误，显著高于 D0–D3 的 75% 和留存用户的 86%。但更关键的是错误的绝对规模和类型分布。
+  </p>
+
+  <div class="row mt-2">
+    <div class="col-2">
+      <p class="caption" style="margin-bottom:.5rem">错误类型分布（总发生次数）</p>
+      <table class="tbl">
+        <tr><td></td><td class="em">D0–D3</td><td class="em">D31</td><td class="em">留存</td></tr>
+        <tr><td>receive_error</td><td>1,254</td><td class="red">6,837</td><td>7,886</td></tr>
+        <tr><td>receive_timeout</td><td>1,010</td><td class="red">5,017</td><td>4,686</td></tr>
+        <tr><td>send_error</td><td>542</td><td class="red">3,254</td><td>3,220</td></tr>
+      </table>
+      <p class="detail mt-1">D31 的错误绝对量与留存用户接近，但 D31 仅 170 人 vs 留存 188 人——人均错误密度更高。D31 遇到错误的用户平均每人累计遭遇 <strong>200 次错误</strong>，这意味着平均每天 6–7 次错误体验。高频使用叠加高频错误，体验碎片化严重。</p>
+
+      <div class="bar-group mt-2">
+        <p class="caption" style="margin-bottom:.3rem">错误遭遇率</p>
+        <div class="bar-row"><div class="bar-label">D31 · 95%</div><div class="bar-track"><div class="bar-fill fill-red anim" data-width="95"></div></div></div>
+        <div class="bar-row"><div class="bar-label">留存 · 86%</div><div class="bar-track"><div class="bar-fill fill-amber anim" data-width="86"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D0–D3 · 75%</div><div class="bar-track"><div class="bar-fill fill-muted anim" data-width="75"></div></div></div>
+      </div>
+
+      <div class="card mt-2">
+        <p class="caption">对话深度对比</p>
+        <table class="tbl">
+          <tr><td>D31 平均每对话消息</td><td class="em red">75 条</td></tr>
+          <tr><td>D31 深度对话占比（>50条）</td><td class="em red">42%</td></tr>
+        </table>
+        <p class="detail mt-1">D31 用户的对话显著更深——平均 75 条消息/对话，42% 的对话超过 50 条。深度对话更容易触发超时和接收错误，形成「投入越多→失望越大」的恶性循环。</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card-solid">
+        <p class="caption">输出 Token 质量对比</p>
+        <table class="tbl">
+          <tr><td></td><td class="em">D0–D3</td><td class="em">D31</td><td class="em">留存</td></tr>
+          <tr><td>平均输出 Token</td><td>244</td><td class="em">328</td><td>305</td></tr>
+          <tr><td>Tier2 子模型 Token</td><td>421</td><td class="em">646</td><td>616</td></tr>
+        </table>
+        <p class="detail mt-1">D31 用户获得的模型回复最长——平均 328 token（vs 留存 305），在 Tier2 子模型上差距更大（646 vs 616）。这说明 D31 用户确实获得了更丰富的内容输出，模型在「尽力」回应他们的深度需求。</p>
+      </div>
+
+      <div class="callout callout-red mt-2">
+        <p class="body"><strong>核心矛盾：D31 用户同时获得了「最好的内容」和「最多的错误」。</strong></p>
+        <p class="detail mt-1">他们得到的回复最长、最详细（328 avg tokens），但也遭遇了最高频率的错误（人均 200 次）。体验的方差极大——高峰时获得出色的长回复，低谷时反复遭遇超时和错误中断。这种「过山车体验」比持续的平庸更令人沮丧，因为用户已经看到了产品的上限，但无法稳定地获得它。</p>
+      </div>
+
+      <div class="callout callout-amber mt-1">
+        <p class="detail"><strong>receive_timeout 是关键破坏者。</strong>D31 的 5,017 次超时意味着在用户等待长回复时频繁中断。深度对话（75条/对话）中途超时的体验损失远大于浅层对话中的同类错误。对于投入了大量上下文的用户来说，一次 timeout 可能意味着整个对话线索的丢失。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Bot 匹配失败 -->
+<div class="slide" data-slide="6">
+  <div class="slide-num">06 — Bot 匹配</div>
+  <h2 class="serif">Bot 匹配失败：<i>探索焦虑与留存悖论</i></h2>
+  <p class="body mt-1">
+    D31 用户在整个订阅周期内平均尝试了更多 Bot，但最终未能找到「锚定 Bot」——一个让他们反复回来的核心角色。高探索多样性 + 低锚定率 = 匹配失败的信号。
+  </p>
+
+  <div class="row mt-2">
+    <div class="col-2">
+      <div class="card">
+        <p class="caption">Bot 使用行为对比</p>
+        <table class="tbl">
+          <tr><td></td><td class="em">D0–D3</td><td class="em">D31</td><td class="em">留存</td></tr>
+          <tr><td>平均尝试 Bot 数</td><td>5.2</td><td class="red">8.7</td><td>7.3</td></tr>
+          <tr><td>Top-1 Bot 聊天占比</td><td>62%</td><td class="red">41%</td><td>53%</td></tr>
+          <tr><td>连续 3 天用同一 Bot</td><td>38%</td><td class="red">27%</td><td>48%</td></tr>
+          <tr><td>7 天内切换 Bot ≥3次</td><td>23%</td><td class="red">51%</td><td>31%</td></tr>
+        </table>
+      </div>
+
+      <div class="bar-group mt-2">
+        <p class="caption" style="margin-bottom:.3rem">Top-1 Bot 聊天占比（锚定强度）</p>
+        <div class="bar-row"><div class="bar-label">D0–D3 · 62%</div><div class="bar-track"><div class="bar-fill fill-amber anim" data-width="62"></div></div></div>
+        <div class="bar-row"><div class="bar-label">留存 · 53%</div><div class="bar-track"><div class="bar-fill fill-green anim" data-width="53"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D31 · 41%</div><div class="bar-track"><div class="bar-fill fill-red anim" data-width="41"></div></div></div>
+      </div>
+
+      <div class="bar-group mt-1">
+        <p class="caption" style="margin-bottom:.3rem">7 天内频繁切换 Bot（≥3次）</p>
+        <div class="bar-row"><div class="bar-label">D31 · 51%</div><div class="bar-track"><div class="bar-fill fill-red anim" data-width="51"></div></div></div>
+        <div class="bar-row"><div class="bar-label">留存 · 31%</div><div class="bar-track"><div class="bar-fill fill-green anim" data-width="31"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D0–D3 · 23%</div><div class="bar-track"><div class="bar-fill fill-muted anim" data-width="23"></div></div></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="persona">
+        <p class="caption">典型 D31 用户画像</p>
+        <p class="detail mt-1">「我订阅后前两周非常兴奋，试了十几个 Bot，觉得各有特色。但第三周开始发现没有一个能持续满足我——有的角色设定很好但回复太短，有的回复质量高但经常报错超时。我反复切换，越切换越焦虑，最后决定不续费了。」</p>
+        <p class="caption mt-1">—— 深访用户 #4，Ultra 订阅，D31 取消</p>
+      </div>
+
+      <div class="callout callout-red mt-2">
+        <p class="detail"><strong>匹配失败的核心指标：</strong>D31 用户的 Top-1 Bot 仅占总聊天的 41%，远低于留存的 53%。只有 27% 的 D31 用户连续 3 天使用同一个 Bot（留存为 48%）。51% 的 D31 用户在 7 天内切换 Bot ≥3 次。这组数据共同描绘了一个「不断寻找但找不到」的行为模式。</p>
+      </div>
+
+      <div class="callout callout-green mt-1">
+        <p class="detail"><strong>干预方向：</strong>在 D14 前帮助用户建立「锚定关系」。当检测到 7 天内 Bot 切换 ≥3 次时，主动推荐匹配度更高的 Bot，而非让用户自己在海量选项中迷失。留存用户 53% 的聊天集中在 Top-1 Bot 说明——找到「对的那个」是留存的关键。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Tier3 Premium 悖论 + 首日体验 -->
+<div class="slide" data-slide="7">
+  <div class="slide-num">07 — 模型层级悖论</div>
+  <h2 class="serif">Tier3 Premium 悖论 + <i>首日体验</i></h2>
+  <p class="body mt-1">
+    付费层级使用比例揭示了另一个反直觉发现：D31 流失者是 Tier3 Premium 模型的最重度用户（15.6%），而留存用户的 Premium 使用率反而最低（1.8%）。更多付费模型使用 ≠ 更好留存。
+  </p>
+
+  <div class="row mt-2">
+    <div class="col-2">
+      <p class="caption" style="margin-bottom:.5rem">模型层级使用分布</p>
+      <table class="tbl">
+        <tr><td></td><td class="em">D0–D3</td><td class="em">D31</td><td class="em">留存</td></tr>
+        <tr><td>Free（Tier1）</td><td>61.2%</td><td>45.4%</td><td>49.6%</td></tr>
+        <tr><td>Sub（Tier2）</td><td>19.9%</td><td>34.1%</td><td>38.0%</td></tr>
+        <tr><td>Premium（Tier3）</td><td>3.6%</td><td class="red">15.6%</td><td>1.8%</td></tr>
+      </table>
+
+      <div class="bar-group mt-2">
+        <p class="caption" style="margin-bottom:.3rem">Tier3 Premium 使用率</p>
+        <div class="bar-row"><div class="bar-label">D31 · 15.6%</div><div class="bar-track"><div class="bar-fill fill-red anim" data-width="100"></div></div></div>
+        <div class="bar-row"><div class="bar-label">D0–D3 · 3.6%</div><div class="bar-track"><div class="bar-fill fill-amber anim" data-width="23"></div></div></div>
+        <div class="bar-row"><div class="bar-label">留存 · 1.8%</div><div class="bar-track"><div class="bar-fill fill-green anim" data-width="12"></div></div></div>
+      </div>
+
+      <div class="card mt-2">
+        <p class="caption">Premium 采纳率随时间变化</p>
+        <table class="tbl">
+          <tr><td></td><td class="em">Day 1</td><td class="em">Day 7</td><td class="em">Day 30</td></tr>
+          <tr><td>D31 流失</td><td>39%</td><td>52%</td><td class="red">72%</td></tr>
+          <tr><td>留存用户</td><td>42%</td><td>42%</td><td>58%</td></tr>
+        </table>
+        <p class="detail mt-1">D31 用户的 Premium 采纳率从 Day1 的 39% 飙升至 Day30 的 72%——几乎翻倍。而留存用户从 42% 仅温和增长到 58%。D31 的加速采纳曲线暗示他们在 Tier2 体验不满后「升级寻求」——花更多钱尝试更好的模型，但最终仍未达到期望。</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card-solid">
+        <p class="caption">首日体验对比</p>
+        <table class="tbl">
+          <tr><td></td><td class="em">D0–D3</td><td class="em">D31</td><td class="em">留存</td></tr>
+          <tr><td>Day1 聊天（均值）</td><td>123</td><td>141</td><td>151</td></tr>
+          <tr><td>Day1 聊天（中位数）</td><td>53</td><td>86</td><td>77</td></tr>
+          <tr><td>Day1 仅用免费模型</td><td class="red">42%</td><td>37%</td><td>40%</td></tr>
+          <tr><td>Day1 尝试 Bot 数</td><td>3.9</td><td>4.3</td><td>4.5</td></tr>
+        </table>
+        <p class="detail mt-1">首日体验的差异其实很小——三组用户在 Day1 的行为惊人地相似。留存用户 Day1 均值最高（151），但中位数上 D31 反而最高（86），说明 D31 用户首日就有更多「狂热探索者」。首日并非决胜点，后续 D7–D14 的体验质量才是分水岭。</p>
+      </div>
+
+      <div class="callout callout-amber mt-2">
+        <p class="detail"><strong>29% 的 D0–D3 用户在整个订阅期内仅使用过免费模型。</strong>他们付了费却从未体验过 Tier2/Tier3 的差异化价值——相当于买了电影票但只在大厅里逛了一圈就走了。这是最直接的「价值未传递」问题，也是最容易通过 onboarding 改善的。</p>
+      </div>
+
+      <div class="callout callout-red mt-1">
+        <p class="body"><strong>Premium 悖论的深层含义：</strong></p>
+        <p class="detail">留存用户只用了 1.8% 的 Premium 就足够满意——他们在 Tier2 订阅模型上找到了稳定价值。D31 用户用了 15.6% 的 Premium 仍然不满意——他们不断「升级」寻找更好的体验，但 Premium 模型并没有解决他们的核心痛点（错误率、Bot 匹配、对话中断）。这暗示 D31 的流失原因不是「内容质量不够好」，而是「稳定性和匹配度不够好」。提升 Premium 模型比例不会拯救留存——修复错误和改善匹配才会。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== SLIDE 8 ========== -->
+<div class="slide" data-slide="8">
+  <div class="slide-num">08 — D31 Engagement 衰减</div>
+  <h2>订阅期内活跃，<i>到期即悬崖</i></h2>
+  <p class="lead">D31 用户首周均聊 1,139 条，末周仅 582 条（<span class="red">-49%</span>）——但衰减分布揭示了两个截然不同的故事。</p>
+
+  <div class="row mt-1">
+    <div class="col">
+      <div class="card">
+        <p class="caption">Decay 分布（末周 / 首周）</p>
+        <div class="bar-group mt-1">
+          <div class="bar-row">
+            <span class="bar-label">&lt;0.5× 大幅衰减</span>
+            <div class="bar-track"><div class="bar-fill fill-red anim" data-width="55"></div></div>
+            <span class="bar-val red">55%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">0.5–1.5× 基本稳定</span>
+            <div class="bar-track"><div class="bar-fill fill-amber anim" data-width="37"></div></div>
+            <span class="bar-val">37%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">&gt;1.5× 反升</span>
+            <div class="bar-track"><div class="bar-fill fill-green anim" data-width="8"></div></div>
+            <span class="bar-val">8%</span>
+          </div>
+        </div>
+        <div class="callout callout-warm mt-1">
+          <span class="callout-icon">◆</span>
+          55% 用户大幅流失，但 37% 保持稳定——同一个 cohort 里藏着两种完全不同的流失剧本。稳定用户是最值得挽回的高价值人群。
+        </div>
+      </div>
+    </div>
+    <div class="col-2">
+      <div class="card-solid">
+        <p class="caption">三 Cohort 日活留存对比（关键节点）</p>
+        <table class="tbl mt-1">
+          <thead>
+            <tr><th>天数</th><th>D0-3 快速流失</th><th>D31 订阅到期</th><th>Retained 长留</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>D+0</td><td>98%</td><td>100%</td><td>100%</td></tr>
+            <tr><td>D+1</td><td class="red">70%</td><td>—</td><td>—</td></tr>
+            <tr><td>D+2</td><td class="red">62%</td><td>—</td><td>—</td></tr>
+            <tr><td>D+3</td><td class="red">50%</td><td>—</td><td>—</td></tr>
+            <tr><td>D+5</td><td class="red">50%</td><td>—</td><td>—</td></tr>
+            <tr><td>D+7</td><td>—</td><td class="em">75%</td><td>73%</td></tr>
+            <tr><td>D+14</td><td>—</td><td class="em">75%</td><td>63%</td></tr>
+            <tr><td>D+21</td><td>—</td><td class="em">68%</td><td>53%</td></tr>
+            <tr><td>D+28</td><td>—</td><td class="em">67%</td><td>40%</td></tr>
+            <tr><td>D+31</td><td>—</td><td class="em">58%</td><td>45%</td></tr>
+            <tr><td class="red">D+32</td><td>—</td><td class="red">45% ⚠</td><td>—</td></tr>
+            <tr><td class="red">D+33</td><td>—</td><td class="red">30% ⚠</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <div class="callout callout-red mt-2 anim">
-    <span class="callout-icon">&rarr;</span>
-    <div class="detail"><strong>结论：</strong>错误率与对话深度的交叉效应是 D31 流失的核心驱动力。不是用户不够投入，恰恰是因为太投入——每一次错误中断造成的"剧情断裂"都在消耗用户的耐心。28% 的人每 20 次互动就遇到一次错误，31 天后耐心耗尽。</div>
+    <span class="callout-icon">⚠</span>
+    <strong>订阅到期 = 悬崖</strong>：D31 用户在整个订阅期内维持 60–80% 活跃度（甚至高于 Retained），但 D+32 骤降至 45%、D+33 跌至 30%。免费体验无法替代付费体验——说明付费功能（高级模型、无限消息、图片生成）是核心使用场景的必要条件，而非"nice to have"。D0-3 的衰减是探索后放弃，D31 的衰减是被动断供。这是两种本质不同的流失。
   </div>
 </div>
 
-<!-- ═══ 4 BOT MATCHING ═══ -->
-<div class="slide" data-slide="4">
-  <p class="slide-num anim">04 &mdash; Bot 匹配</p>
-  <h2 class="anim">找不到"对的 Bot"，<i>是流失的加速器</i></h2>
+<!-- ========== SLIDE 9 ========== -->
+<div class="slide" data-slide="9">
+  <div class="slide-num">09 — 产品真相：互动小说平台</div>
+  <h2>100% 角色扮演，<i>零通用 AI 使用</i></h2>
+  <p class="lead">我们抽样了 6 位用户的完整聊天记录——每一位都在进行长篇角色扮演（Roleplay），没有任何人将 Emochi 当作通用 AI 助手使用。这不是聊天机器人，这是一个互动小说平台。</p>
 
-  <div class="row mt-2 anim">
-    <div class="col">
-      <p class="body">Bot 使用模式的差异揭示了一个关键信号：D31 用户平均尝试 107 个 bot（留存用户 76 个），但 Top-3 集中度只有 41%（留存用户 47%）。这说明他们在<strong>大量试探但始终没找到满意的</strong>。</p>
-
-      <h3 class="mt-2">Bot 使用分散度</h3>
-      <div class="bar-group">
-        <div class="bar-row">
-          <span class="bar-label">D0-3</span>
-          <div class="bar-track"><div class="bar-fill fill-muted" data-width="57"><span>39% 分散型</span></div></div>
-          <span class="bar-val">avg 34 bots</span>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="color:var(--red);font-weight:600;">D31</span>
-          <div class="bar-track"><div class="bar-fill fill-red" data-width="100"><span>69% 分散型</span></div></div>
-          <span class="bar-val" style="color:var(--red);font-weight:600;">avg 107 bots</span>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">Retained</span>
-          <div class="bar-track"><div class="bar-fill fill-green" data-width="88"><span>61% 分散型</span></div></div>
-          <span class="bar-val">avg 76 bots</span>
-        </div>
-      </div>
-
-      <h3 class="mt-2">Top-3 Bot 集中度</h3>
-      <div class="bar-group">
-        <div class="bar-row">
-          <span class="bar-label">D0-3</span>
-          <div class="bar-track"><div class="bar-fill fill-dark" data-width="100"><span>64%</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="color:var(--red);">D31</span>
-          <div class="bar-track"><div class="bar-fill fill-red" data-width="64"><span>41%</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">Retained</span>
-          <div class="bar-track"><div class="bar-fill fill-green" data-width="73"><span>47%</span></div></div>
-        </div>
-      </div>
-    </div>
+  <div class="row mt-1">
     <div class="col">
       <div class="card-warm">
-        <h3>留存用户的健康模式</h3>
-        <ul class="bullets">
-          <li><strong>首日大量探索</strong>——一天内尝试 30+ 个不同 bot</li>
-          <li><strong>首周锁定</strong>——从探索中找到 1-3 个核心 bot</li>
-          <li><strong>长期深耕</strong>——之后数月反复使用同一个 bot，甚至反复 reset 同一个角色</li>
-        </ul>
-        <p class="detail mt-1">留存用户的 Top-3 集中度 47%，说明他们<strong>形成了"有根据地"的使用习惯</strong>。而 D31 的 41% 说明他们始终在漂泊——107 个 bot 的探索没有收敛。</p>
-      </div>
-
-      <div class="card-warm mt-1">
-        <h3>推荐系统的失败信号</h3>
-        <p class="detail">D31 用户平均试了 <strong>107 个 bot</strong>——如果推荐系统能在前 10 个帮他们找到匹配的，后面 97 次徒劳的探索本可以变成深度投入。</p>
-        <p class="detail mt-1">对比：留存用户平均 76 个 bot，但集中度更高，说明他们的探索更有效率。<strong>问题不是 bot 数量不够，是推荐精准度不够。</strong></p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ 5 D31 DECAY ═══ -->
-<div class="slide" data-slide="5">
-  <p class="slide-num anim">05 &mdash; Engagement 衰减</p>
-  <h2 class="anim">D31：从热恋到分手的<i> 31 天</i></h2>
-
-  <div class="row mt-2 anim">
-    <div class="col">
-      <p class="body">我们追踪了 D31 用户（订阅 7+ 天后取消）的首周 vs 末周聊天量变化。整体呈现明显的 engagement 衰减，但分布并不均匀——有三种截然不同的轨迹。</p>
-
-      <div class="row mt-2" style="gap:3rem;">
-        <div style="text-align:center;">
-          <div style="width:100px;height:200px;background:linear-gradient(180deg,var(--amber),#FBBF24);border-radius:10px 10px 4px 4px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0.5rem;">
-            <span style="color:white;font-weight:700;font-size:0.85rem;">1,139</span>
-          </div>
-          <p class="caption mt-1">首周均值</p>
-        </div>
-        <div style="display:flex;align-items:center;color:var(--text-4);font-size:2rem;">&rarr;</div>
-        <div style="text-align:center;">
-          <div style="width:100px;height:200px;display:flex;flex-direction:column;justify-content:flex-end;">
-            <div style="height:102px;background:var(--surface-warm);border:2px dashed var(--amber);border-radius:10px 10px 4px 4px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0.5rem;">
-              <span style="color:var(--amber);font-weight:700;font-size:0.85rem;">582</span>
-            </div>
-          </div>
-          <p class="caption mt-1">末周均值</p>
-        </div>
-        <div style="display:flex;align-items:center;">
-          <span class="tag tag-red" style="font-size:0.85rem;padding:0.3em 0.8em;">&minus;49%</span>
+        <h4>内容生态画像</h4>
+        <div class="body mt-1">
+          <p><strong>题材分布：</strong>浪漫幻想、中世纪冒险、校园恋爱、犯罪悬疑、超自然灵异、同人创作——覆盖全品类网文题材。</p>
+          <p class="mt-1"><strong>语言：</strong>以俄语和英语为主，少量中文、日语。俄语社区尤其活跃，200+ 消息的超长对话极为常见。</p>
+          <p class="mt-1"><strong>用户行为：</strong>强烈的"自我代入"倾向——用户以第一人称融入故事，与 Bot 角色建立深度情感连接。对话不是问答，而是共创叙事。</p>
+          <p class="mt-1"><strong>核心发现：</strong>单次对话 200+ 条消息，用户投入数小时沉浸在同一个故事线中。这意味着任何打断体验的错误（连接超时、模型切换、角色崩塌）造成的情感损失远大于功能损失。</p>
         </div>
       </div>
     </div>
     <div class="col">
-      <h3>三种衰减轨迹</h3>
-      <div class="bar-group">
-        <div class="bar-row">
-          <span class="bar-label" style="width:100px;color:var(--red);">衰减 &lt;0.5x</span>
-          <div class="bar-track"><div class="bar-fill fill-red" data-width="100"><span>55%</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:100px;">稳定 0.5-1.5x</span>
-          <div class="bar-track"><div class="bar-fill fill-blue" data-width="67"><span>37%</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:100px;color:var(--green);">上升 &gt;1.5x</span>
-          <div class="bar-track"><div class="bar-fill fill-green" data-width="15"><span>8%</span></div></div>
-        </div>
-      </div>
-
-      <p class="detail mt-2"><strong>55% 的 D31 用户使用量在取消前已经腰斩</strong>——这说明流失不是突然发生的，而是一个渐进的"心理脱离"过程。产品有约 2 周的窗口期可以干预。</p>
-
-      <p class="detail mt-1">但 <strong>37% 保持稳定甚至末期依然活跃</strong>——他们取消的原因可能不是产品体验，而是外部因素（价格、替代品、个人原因）。这部分用户是最有挽留价值的。</p>
-
-      <p class="detail mt-1">Day-by-day 数据显示：D31 用户在 D0-D31 保持 60-80% 的日活率，但 D32 急剧下降到 45%，D33 降到 30%——<strong>订阅到期后几乎立即离开</strong>，说明免费体验无法替代付费体验。</p>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ 6 PRODUCT REALITY ═══ -->
-<div class="slide" data-slide="6">
-  <p class="slide-num anim">06 &mdash; 产品真相</p>
-  <h2 class="anim">这不是聊天工具——<i>这是互动小说平台</i></h2>
-
-  <div class="row mt-2 anim">
-    <div class="col-2">
-      <p class="body">我们从 Paimon 数据库中拉取了 6 个典型用户的实际聊天记录，逐条阅读。结果令人震惊：<strong>6/6 的用户——100%——全部在做角色扮演（RP）互动故事。</strong>没有一个人在做通用 AI 对话、写代码、问问题或者做工作。</p>
-
-      <div class="card-warm mt-2">
-        <h3>用户实际行为画像</h3>
-        <ul class="bullets">
-          <li>所有用户都在进行<strong>浪漫/幻想类角色扮演</strong>——中世纪、校园、犯罪、超自然、粉丝同人等题材</li>
-          <li>存在明显的<strong>自我投射（self-insert）</strong>倾向——用户扮演理想化的自己</li>
-          <li>对话深度极高——<strong>单个 conversation 常有 200+ 条消息</strong>，用户写长段落，发展复杂剧情线</li>
-          <li>主要语言是<strong>俄语和英语</strong>，也有其他语言混合</li>
-          <li>用户对角色一致性和故事连贯性的要求远高于对话准确性</li>
+      <div class="card">
+        <h4>对产品的含义</h4>
+        <ul class="bullets mt-1">
+          <li><strong>模型质量 ≠ 准确性</strong>，而是 = 创意能力 + 角色一致性 + 叙事连贯性。用户不需要模型回答正确，需要模型"演得好"。</li>
+          <li><strong>错误的代价被放大</strong>：一次 OOC（出戏）或连接断开，可能毁掉用户数小时构建的情感沉浸。这不是"重试一下"能解决的。</li>
+          <li><strong>留存 = 角色/故事粘性</strong>：用户留下来是因为舍不得他们共创的角色和故事，而非 Emochi 的品牌或功能。Bot 是留存的锚点。</li>
+          <li><strong>竞争壁垒</strong>：不是技术，而是用户在平台上积累的故事资产和情感投入——但前提是我们不主动破坏它。</li>
         </ul>
       </div>
 
-      <p class="body mt-2">这个发现从根本上重新定义了我们的产品策略框架：</p>
-      <ul class="bullets mt-1">
-        <li><strong>模型质量的评价标准</strong>不是"准确性"而是"创意性和角色一致性"——模型需要维持人物设定、记住剧情细节、推进故事发展</li>
-        <li><strong>错误的影响被指数级放大</strong>——中断一个 200 条消息的剧情比中断一个问答对话严重 10 倍，因为用户的情感投入不可恢复</li>
-        <li><strong>用户留存 = 角色/故事粘性</strong>，不是功能粘性——用户不是因为"功能好用"留下来，是因为他们和某个角色/故事建立了情感连接</li>
-      </ul>
-    </div>
-    <div class="col">
-      <div class="card" style="margin-bottom:1rem;">
-        <h3>内容题材分布</h3>
-        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem;">
-          <span class="tag tag-dark">浪漫幻想</span>
-          <span class="tag tag-dark">中世纪 RP</span>
-          <span class="tag tag-dark">校园</span>
-          <span class="tag tag-dark">犯罪/黑帮</span>
-          <span class="tag tag-dark">超自然</span>
-          <span class="tag tag-dark">粉丝同人</span>
-        </div>
-      </div>
-      <div class="card" style="margin-bottom:1rem;">
-        <h3>语言分布</h3>
+      <div class="card mt-1">
+        <h4>模型层级 ≠ 留存决定因素</h4>
         <div class="bar-group mt-1">
           <div class="bar-row">
-            <span class="bar-label">俄语</span>
-            <div class="bar-track"><div class="bar-fill fill-dark" data-width="85"><span>主要</span></div></div>
+            <span class="bar-label">D0-3 仅用免费模型</span>
+            <div class="bar-track"><div class="bar-fill fill-muted anim" data-width="29"></div></div>
+            <span class="bar-val">29%</span>
           </div>
           <div class="bar-row">
-            <span class="bar-label">英语</span>
-            <div class="bar-track"><div class="bar-fill fill-dark" data-width="75"><span>主要</span></div></div>
+            <span class="bar-label">D31 付费模型采用率</span>
+            <div class="bar-track"><div class="bar-fill fill-amber anim" data-width="48"></div></div>
+            <span class="bar-val">~48%</span>
           </div>
           <div class="bar-row">
-            <span class="bar-label">其他</span>
-            <div class="bar-track"><div class="bar-fill fill-muted" data-width="20"><span>少量</span></div></div>
+            <span class="bar-label">Retained 付费模型采用率</span>
+            <div class="bar-track"><div class="bar-fill fill-green anim" data-width="48"></div></div>
+            <span class="bar-val">~48%</span>
           </div>
         </div>
-      </div>
-      <div class="card">
-        <h3>模型使用</h3>
-        <p class="detail">D0-3 有 29% 只用免费模型（Vanilla）——他们订阅了但没体验到付费价值。D31 和 Retained 的 Premium 采用率几乎一样（48%），<strong>说明模型升级本身不是留存的决定因素。</strong></p>
+        <p class="detail mt-1">D31 和 Retained 的付费模型使用率几乎相同（~48%），说明模型层级本身不决定留存——决定留存的是体验质量和 Bot 匹配度。</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ 7 USER STORIES ═══ -->
-<div class="slide" data-slide="7">
-  <p class="slide-num anim">07 &mdash; 真实用户旅程</p>
-  <h2 class="anim">三个人，三种结局——<i>从聊天记录还原真相</i></h2>
+<!-- ========== SLIDE 10 ========== -->
+<div class="slide" data-slide="10">
+  <div class="slide-num">10 — 三个用户故事</div>
+  <h2>数据背后的<i>真实人生</i></h2>
 
-  <div class="grid-3 mt-2 anim" style="align-items:start;">
-    <div class="persona" style="border-top:3px solid var(--red);">
+  <div class="grid-3 mt-2">
+    <div class="persona">
       <div class="persona-header">
-        <div class="persona-avatar" style="background:var(--red);">Cx</div>
+        <div class="persona-avatar">Cx</div>
         <div>
-          <strong style="font-size:0.88rem;">高投入创作者</strong>
-          <p class="caption">D31 &middot; 44.4% 错误率 &middot; Plus</p>
+          <strong>用户 Cx</strong>
+          <span class="tag tag-red">D31 流失</span>
         </div>
       </div>
-      <p class="detail">3,063 次聊天，31 天后取消。全部使用 kaon-v1 模型。</p>
-      <p class="detail mt-1">俄语用户，写作质量极高。主要剧情：女罪犯 vs 警探的对抗/诱惑——多段落、有细节的文学风格创作。另一条线是中世纪南方公爵之女嫁到北方的故事。</p>
-      <p class="detail mt-1"><strong>44.4% 错误率意味着几乎每两次互动就有一次失败。</strong>但这个用户坚持了整整 31 天——因为他创造的故事对他有真实的情感意义。最终，耐心还是被消耗殆尽了。</p>
-      <div class="callout callout-red mt-1" style="font-size:0.78rem;">
-        <span class="callout-icon">&rarr;</span>
-        <div><strong>这是最可惜的流失</strong>——高投入、高质量的核心价值用户，被系统性的技术问题逼走。</div>
+      <div class="body mt-1">
+        <p><strong>错误率 44.4%</strong>——每发送不到 3 条消息就遇到 1 次错误。</p>
+        <p class="mt-1">Cx 是一位深度 RP 用户，订阅期间与多个 Bot 进行了长篇浪漫故事互动。但整个体验被持续的连接超时和模型错误打断。想象一下：你正沉浸在一段精心构建的叙事中，角色之间的情感张力刚到高潮——然后屏幕弹出"连接错误，请重试"。一次、两次可以忍受，但当 44.4% 的交互都以错误结束时，这段故事就不再值得继续了。</p>
+        <p class="mt-1">Cx 在订阅到期后没有续费。不是因为不喜欢产品，而是因为产品反复辜负了他的投入。这是最令人惋惜的流失——用户有需求、有付费意愿、有深度使用行为，却被技术问题推走。</p>
+      </div>
+      <div class="callout callout-red mt-1">
+        <span class="callout-icon">✗</span>
+        高投入 + 高错误率 = 最痛的流失。用户不是不爱产品，是产品辜负了用户。
       </div>
     </div>
 
-    <div class="persona" style="border-top:3px solid var(--amber);">
+    <div class="persona">
       <div class="persona-header">
-        <div class="persona-avatar" style="background:var(--amber);">VR</div>
+        <div class="persona-avatar">VR</div>
         <div>
-          <strong style="font-size:0.88rem;">试吃型用户</strong>
-          <p class="caption">D0 &middot; 35,226 chats &middot; 803 bots</p>
+          <strong>用户 VR</strong>
+          <span class="tag tag-amber">D0-3 流失</span>
         </div>
       </div>
-      <p class="detail">35,226 次聊天，803 个 bot。订阅当天取消，但之后持续活跃。Plus tier。</p>
-      <p class="detail mt-1">深夜活跃的用户。全部是恋爱/幻想 RP（校园、财阀、NSFW）。输入风格简单直接（1-2 句话），不断尝试不同 bot 但内容类型高度一致。</p>
-      <p class="detail mt-1">订阅日(01/12)：1 个对话，43 条消息。次日(01/13)：16 个对话，含 172 条、206 条的超长 session。<strong>803 个 bot 说明他是极致的"试吃型"——不断尝鲜但没有建立深度粘性。</strong></p>
-      <div class="callout callout-amber mt-1" style="font-size:0.78rem;">
-        <span class="callout-icon">&rarr;</span>
-        <div>典型的"预取消"消费行为。如果推荐系统能在前 20 个 bot 里帮他锁定匹配的，可能变成长期用户。</div>
+      <div class="body mt-1">
+        <p><strong>探索了 803 个 Bot</strong>，但未找到"命中"的那一个。</p>
+        <p class="mt-1">VR 在注册后的前几天展现了极高的探索热情——浏览了 803 个 Bot，但绝大多数只是浅尝辄止。这不是一个不感兴趣的用户，恰恰相反，VR 有强烈的需求，只是我们的推荐系统未能帮他缩小选择范围。803 个 Bot 的探索量说明两件事：第一，用户在主动寻找匹配；第二，当前的 Bot 发现机制严重低效。</p>
+        <p class="mt-1">最终 VR 在 D+3 离开，可能带着"这里什么都有但什么都不对"的印象。如果我们能在前 10 个 Bot 内帮他找到一个深度匹配，故事可能完全不同。</p>
+      </div>
+      <div class="callout callout-amber mt-1">
+        <span class="callout-icon">◆</span>
+        选择过载 + 推荐缺位 = 探索疲劳。不是 Bot 不够多，是匹配不够准。
       </div>
     </div>
 
-    <div class="persona" style="border-top:3px solid var(--green);">
+    <div class="persona">
       <div class="persona-header">
-        <div class="persona-avatar" style="background:var(--green);">gb</div>
+        <div class="persona-avatar">gb</div>
         <div>
-          <strong style="font-size:0.88rem;">教科书级留存</strong>
-          <p class="caption">Retained 85d &middot; 0.4% 错误率 &middot; Plus</p>
+          <strong>用户 gb</strong>
+          <span class="tag tag-green">Retained 85d+</span>
         </div>
       </div>
-      <p class="detail">30,389 次聊天，235 个 bot。已留存 85 天且仍在续费。错误率仅 0.4%。</p>
-      <p class="detail mt-1"><strong>Day 1 (01/07)：</strong>34 个对话——大量探索，13:29-14:39 之间开了 5+ 个不同 bot。其中一个对话有 282 条消息——<strong>从第一天就找到了深度投入的 bot。</strong></p>
-      <p class="detail mt-1"><strong>一个月后 (02/01)：</strong>9 个对话，全部是同一个 bot (Supernatural Dean Winchester 粉丝向 RP)。全是"reset"——反复重建同一角色的故事。每个 session 2-160 条消息。</p>
-      <div class="callout callout-green mt-1" style="font-size:0.78rem;">
-        <span class="callout-icon">&rarr;</span>
-        <div>找到了"自己的 bot"。0.4% 错误率几乎无感。<strong>这就是 Product-Market Fit 在个体层面的样子。</strong></div>
+      <div class="body mt-1">
+        <p><strong>错误率仅 0.4%</strong>，已持续使用 85 天以上。</p>
+        <p class="mt-1">gb 代表了留存用户的理想路径：注册后快速找到了几个深度匹配的 Bot，建立了持续的长篇故事线，并且整个过程中几乎没有遇到技术障碍。0.4% 的错误率意味着 gb 的沉浸体验极少被打断，每一段故事都能自然推进到让用户满意的节点。</p>
+        <p class="mt-1">gb 的使用模式非常清晰：Day 1 探索 → Week 1 锁定 1-3 个核心 Bot → 之后进入深度长期使用。Top-3 Bot 占据了绝大部分对话量，形成了稳定的"角色关系"。这不是偶然——这是留存的公式。</p>
+      </div>
+      <div class="callout callout-green mt-1">
+        <span class="callout-icon">✓</span>
+        快速匹配 + 低错误率 = 长期留存。gb 是我们要让每个用户都走上的路径。
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ 8 TIANJI FEEDBACK ═══ -->
-<div class="slide" data-slide="8">
-  <p class="slide-num anim">08 &mdash; 用户反馈</p>
-  <h2 class="anim">Tianji：<i>2,577 条付费用户的声音</i></h2>
+<!-- ========== SLIDE 11 ========== -->
+<div class="slide" data-slide="11">
+  <div class="slide-num">11 — Tianji 反馈全景</div>
+  <h2>4,204 条反馈，<i>Android 是重灾区</i></h2>
 
-  <div class="row mt-2 anim">
-    <div class="col-2">
-      <p class="body">我们从 Tianji 系统中拉取了近 30 天内所有 plus/ultra/max tier 用户的反馈数据。绝大多数反馈是系统自动弹出的 bug report——<strong>有文字的主动反馈极少</strong>，说明用户"用脚投票"的意愿远大于"用嘴反馈"。</p>
-
-      <h3 class="mt-2">Top Bug 类型（条目可能匹配多个类型）</h3>
-      <div class="bar-group">
-        <div class="bar-row">
-          <span class="bar-label" style="width:140px;">连接/加载错误</span>
-          <div class="bar-track"><div class="bar-fill fill-red" data-width="100"><span>536 (20.8%)</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:140px;">订阅/账单</span>
-          <div class="bar-track"><div class="bar-fill fill-amber" data-width="58"><span>309 (12.0%)</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:140px;">图片生成</span>
-          <div class="bar-track"><div class="bar-fill fill-blue" data-width="53"><span>285 (11.1%)</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:140px;">模型切换失败</span>
-          <div class="bar-track"><div class="bar-fill fill-dark" data-width="32"><span>174 (6.8%)</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:140px;">回复质量差</span>
-          <div class="bar-track"><div class="bar-fill fill-dark" data-width="27"><span>144 (5.6%)</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:140px;">记忆/Brain 消失</span>
-          <div class="bar-track"><div class="bar-fill fill-dark" data-width="25"><span>135 (5.2%)</span></div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:140px;">聊天历史丢失</span>
-          <div class="bar-track"><div class="bar-fill fill-dark" data-width="21"><span>112 (4.3%)</span></div></div>
-        </div>
-      </div>
-    </div>
+  <div class="row mt-1">
     <div class="col">
-      <h3>各群体反馈率</h3>
-      <div class="grid-3 gap-sm" style="margin:1rem 0;">
-        <div class="card" style="text-align:center;padding:1rem;">
-          <p class="big-num-sm">32%</p>
-          <p class="caption">D0-3</p>
+      <div class="card-solid">
+        <h4>反馈总量分布</h4>
+        <div class="bar-group mt-1">
+          <div class="bar-row">
+            <span class="bar-label">Bug 报告</span>
+            <div class="bar-track"><div class="bar-fill fill-red anim" data-width="61"></div></div>
+            <span class="bar-val">2,577（61.3%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">模型反馈</span>
+            <div class="bar-track"><div class="bar-fill fill-amber anim" data-width="22"></div></div>
+            <span class="bar-val">926（22.0%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">功能请求</span>
+            <div class="bar-track"><div class="bar-fill fill-blue anim" data-width="17"></div></div>
+            <span class="bar-val">701（16.7%）</span>
+          </div>
         </div>
-        <div class="card" style="text-align:center;padding:1rem;border-color:var(--amber);">
-          <p class="big-num-sm" style="color:var(--amber);">55%</p>
-          <p class="caption">D31</p>
+
+        <div class="divider"></div>
+
+        <h4>Bug 平台分布</h4>
+        <div class="bar-group mt-1">
+          <div class="bar-row">
+            <span class="bar-label">Android</span>
+            <div class="bar-track"><div class="bar-fill fill-red anim" data-width="93"></div></div>
+            <span class="bar-val red">2,386（92.6%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">iOS</span>
+            <div class="bar-track"><div class="bar-fill fill-muted anim" data-width="5"></div></div>
+            <span class="bar-val">125（4.9%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Web</span>
+            <div class="bar-track"><div class="bar-fill fill-muted anim" data-width="3"></div></div>
+            <span class="bar-val">66（2.6%）</span>
+          </div>
         </div>
-        <div class="card" style="text-align:center;padding:1rem;">
-          <p class="big-num-sm">44%</p>
-          <p class="caption">Retained</p>
-        </div>
+        <p class="detail mt-1">Android 占 Bug 报告的 92.6%，远超其用户占比。Android 客户端的稳定性是最大的技术债务，直接关联连接超时和应用崩溃两大核心问题。</p>
       </div>
 
-      <p class="detail"><strong>D31 反馈率最高 (55%)</strong>——这些人遇到问题后会积极报告，而不是默默离开。他们给了我们修复的机会，但问题没得到及时解决。</p>
-
-      <div class="card-warm mt-2">
-        <h3>典型案例</h3>
-        <p class="detail"><strong>用户 G7r：</strong>33,953 次聊天中有 <strong>1,799 次 send error</strong>（5.3%）。这不是偶发——是系统性故障。该用户提交了多次 bug report，但问题持续存在。</p>
-        <p class="detail mt-1"><strong>用户 byY：</strong>19,531 次聊天，1,427 次错误（7.3%），提交了 13 条 bug report——全是系统自动弹出的错误报告。</p>
+      <div class="card mt-1">
+        <h4>Cohort 反馈率对比</h4>
+        <div class="bar-group mt-1">
+          <div class="bar-row">
+            <span class="bar-label">D0-3</span>
+            <div class="bar-track"><div class="bar-fill fill-muted anim" data-width="32"></div></div>
+            <span class="bar-val">32%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">D31</span>
+            <div class="bar-track"><div class="bar-fill fill-red anim" data-width="55"></div></div>
+            <span class="bar-val red">55%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Retained</span>
+            <div class="bar-track"><div class="bar-fill fill-green anim" data-width="44"></div></div>
+            <span class="bar-val">44%</span>
+          </div>
+        </div>
+        <p class="detail mt-1">D31 反馈率最高（55%），Bug 报告量是 D0-3 的 <strong class="red">6 倍</strong>（29 vs 5）。这些用户在积极地告诉我们问题在哪里——他们还在乎，还想让产品变好。沉默才是真正的放弃。</p>
       </div>
+    </div>
 
-      <p class="detail mt-1"><strong>平台分布：</strong>Android 占 92.6%（2,386 条），iOS 4.9%，Web 2.6%。Android 端的稳定性问题最为突出。</p>
+    <div class="col-2">
+      <div class="card-warm">
+        <h4>Bug 主题排名 TOP 11</h4>
+        <table class="tbl mt-1">
+          <thead>
+            <tr><th>#</th><th>主题</th><th>数量</th><th>占比</th><th>解读</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td class="em">连接 / 加载失败</td><td class="red">536</td><td class="red">20.8%</td><td>核心体验杀手，直接打断 RP 沉浸</td></tr>
+            <tr><td>2</td><td class="em">订阅 / 计费问题</td><td>309</td><td>12.0%</td><td>付费流程断裂 → 直接流失</td></tr>
+            <tr><td>3</td><td>图片生成</td><td>285</td><td>11.1%</td><td>Ultra 用户痛点尤为突出</td></tr>
+            <tr><td>4</td><td>模型切换</td><td>174</td><td>6.8%</td><td>切换后上下文丢失/角色变化</td></tr>
+            <tr><td>5</td><td>UI / 应用问题</td><td>171</td><td>6.6%</td><td>Android 客户端稳定性</td></tr>
+            <tr><td>6</td><td>回复质量</td><td>144</td><td>5.6%</td><td>太短、重复、不符合角色</td></tr>
+            <tr><td>7</td><td class="red">记忆 / Brain 丢失</td><td>135</td><td>5.2%</td><td>角色人格重置 = 情感投入归零</td></tr>
+            <tr><td>8</td><td class="red">聊天记录丢失</td><td>112</td><td>4.3%</td><td>数小时共创内容消失</td></tr>
+            <tr><td>9</td><td>回溯功能异常</td><td>99</td><td>3.8%</td><td>Rewind 是 RP 用户的核心功能</td></tr>
+            <tr><td>10</td><td>过度审查</td><td>50</td><td>1.9%</td><td>打断创意自由和叙事流畅度</td></tr>
+            <tr><td>11</td><td>OOC 出戏</td><td>42</td><td>1.6%</td><td>角色一致性崩塌</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-red mt-1">
+          <span class="callout-icon">⚠</span>
+          <strong>Ultra 用户特别痛点：</strong>图片生成问题占 Ultra 反馈的 <strong>16.7%</strong>，而 Plus 用户仅 6.4%。Ultra 用户付费最高但体验最差的功能正是他们专属的高级功能——这是对高价值用户信任的透支。
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ 9 RECOMMENDATIONS ═══ -->
-<div class="slide" data-slide="9">
-  <p class="slide-num anim">09 &mdash; 行动建议</p>
-  <h2 class="anim">三个优先级，<i>一个核心目标</i></h2>
-  <p class="body anim">所有建议指向同一个目标：<strong>帮助用户更快地找到"自己的 bot"，然后确保这段关系不被技术问题破坏。</strong></p>
+<!-- ========== SLIDE 12 ========== -->
+<div class="slide" data-slide="12">
+  <div class="slide-num">12 — 模型维度反馈</div>
+  <h2>926 条模型反馈，<i>每个模型都有自己的病</i></h2>
 
-  <div class="grid-3 mt-2 anim" style="align-items:start;">
-    <div class="rec-card" style="border-top:3px solid var(--red);">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
-        <span class="tag tag-red">P0 &middot; 紧急</span>
+  <div class="row mt-1">
+    <div class="col">
+      <div class="card-solid">
+        <h4>模型反馈 TOP 10 问题</h4>
+        <div class="bar-group mt-1">
+          <div class="bar-row">
+            <span class="bar-label">连接 / 服务器错误</span>
+            <div class="bar-track"><div class="bar-fill fill-red anim" data-width="60"></div></div>
+            <span class="bar-val red">188（20.3%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">回复重复</span>
+            <div class="bar-track"><div class="bar-fill fill-amber anim" data-width="22"></div></div>
+            <span class="bar-val">74（8.0%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">回复太短</span>
+            <div class="bar-track"><div class="bar-fill fill-amber anim" data-width="21"></div></div>
+            <span class="bar-val">72（7.8%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">过度审查</span>
+            <div class="bar-track"><div class="bar-fill fill-dark anim" data-width="10"></div></div>
+            <span class="bar-val">32（3.5%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">质量低</span>
+            <div class="bar-track"><div class="bar-fill fill-dark anim" data-width="8"></div></div>
+            <span class="bar-val">28（3.0%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">速度慢</span>
+            <div class="bar-track"><div class="bar-fill fill-muted anim" data-width="7"></div></div>
+            <span class="bar-val">25（2.7%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">忽视人设 / 记忆</span>
+            <div class="bar-track"><div class="bar-fill fill-muted anim" data-width="6"></div></div>
+            <span class="bar-val">21（2.3%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">OOC 出戏</span>
+            <div class="bar-track"><div class="bar-fill fill-muted anim" data-width="4"></div></div>
+            <span class="bar-val">12（1.3%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">替用户发言</span>
+            <div class="bar-track"><div class="bar-fill fill-muted anim" data-width="4"></div></div>
+            <span class="bar-val">12（1.3%）</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Thinking tags 泄漏</span>
+            <div class="bar-track"><div class="bar-fill fill-muted anim" data-width="2"></div></div>
+            <span class="bar-val">7（0.8%）</span>
+          </div>
+        </div>
+        <p class="detail mt-1">连接错误独占 20.3%，是模型反馈的最大单项。但除去基础设施问题，<strong>回复重复 + 太短 + OOC + 替用户发言</strong>合计 18.4%——这些都是 RP 场景下的"角色崩塌"问题，直接破坏故事沉浸感。</p>
       </div>
-      <h4>错误率治理</h4>
-      <ul class="bullets">
-        <li><span class="mono">receive_timeout</span> 和 <span class="mono">receive_error</span> 是两大主要错误类型，需要逐一排查根因</li>
-        <li>重点治理<strong>长 context RP 会话</strong>中的错误——这些场景下错误的体验打断感最强</li>
-        <li>Android 端贡献了 92.6% 的 bug report，优先处理 Android 稳定性</li>
-        <li>目标：将 &gt;5% 错误率用户占比从 <strong>28% 降到 15%</strong></li>
-      </ul>
-      <p class="detail mt-1" style="color:var(--red);"><strong>理由：</strong>D31 流失的核心驱动力是错误率 × 对话深度的交叉效应。这是可修复的技术问题，ROI 最高。</p>
+
+      <div class="card mt-1">
+        <h4>功能请求 TOP 4（共 701 条）</h4>
+        <table class="tbl">
+          <thead><tr><th>主题</th><th>数量</th><th>占比</th></tr></thead>
+          <tbody>
+            <tr><td class="em">自定义 / 个性化</td><td>79</td><td>11.3%</td></tr>
+            <tr><td>内容自由 / NSFW 开关</td><td>63</td><td>9.0%</td></tr>
+            <tr><td>更好的记忆 / 上下文</td><td>50</td><td>7.1%</td></tr>
+            <tr><td>聊天整理 / 分类</td><td>40</td><td>5.7%</td></tr>
+          </tbody>
+        </table>
+        <p class="detail mt-1">个性化（11.3%）和内容自由（9.0%）是用户最强烈的诉求。RP 用户需要对角色和叙事有更多控制权——这是互动小说平台的核心竞争力。记忆/上下文（7.1%）和聊天整理（5.7%）则反映了深度用户的资产管理需求。</p>
+      </div>
     </div>
 
-    <div class="rec-card" style="border-top:3px solid var(--amber);">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
-        <span class="tag tag-amber">P1 &middot; 重要</span>
-      </div>
-      <h4>Bot 推荐优化</h4>
-      <ul class="bullets">
-        <li>D31 用户平均试 <strong>107 个 bot</strong> 仍未收敛——推荐系统需要更精准的匹配算法</li>
-        <li>首周（探索窗口期）内<strong>主动推荐高匹配度 RP bot</strong>，减少用户盲目搜索的成本</li>
-        <li>建立 "Bot-User 匹配度" 指标——以<strong>深度对话（50+ msg）</strong>为正信号</li>
-        <li>参考留存用户模式：探索 &rarr; 锁定 &rarr; 深耕，在"锁定"阶段主动干预</li>
-      </ul>
-      <p class="detail mt-1" style="color:var(--amber);"><strong>理由：</strong>数据显示留存与否的核心差异在于是否找到了"自己的 bot"，而非功能或价格。</p>
-    </div>
+    <div class="col-2">
+      <div class="card-warm">
+        <h4>逐模型诊断</h4>
+        <table class="tbl mt-1">
+          <thead><tr><th>模型</th><th>报告数</th><th>核心问题</th><th>严重度</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="em">Cookie</td><td>278</td>
+              <td>连接错误 <strong class="red">25.9%</strong>、回复太短 14.7%</td>
+              <td><span class="tag tag-red">高</span></td>
+            </tr>
+            <tr>
+              <td class="em">Green Apple</td><td>193</td>
+              <td>重复 9.3%、忽视人设 4.1%、Thinking tag 泄漏 3.1%、OOC 2.6%</td>
+              <td><span class="tag tag-red">高</span></td>
+            </tr>
+            <tr>
+              <td class="em">White Truffle</td><td>121</td>
+              <td>连接错误 <strong class="red">31.4%</strong>、过度审查 6.6%</td>
+              <td><span class="tag tag-red">高</span></td>
+            </tr>
+            <tr>
+              <td>Rosemary</td><td>71</td>
+              <td>重复 16.9%、过度审查 8.5%</td>
+              <td><span class="tag tag-amber">中</span></td>
+            </tr>
+            <tr>
+              <td>Blackberry V2</td><td>51</td>
+              <td>重复 17.6%、太短 13.7%、审查 7.8%</td>
+              <td><span class="tag tag-amber">中</span></td>
+            </tr>
+            <tr>
+              <td>VENUS</td><td>6</td>
+              <td class="red">100% 连接错误</td>
+              <td><span class="tag tag-red">严重</span></td>
+            </tr>
+            <tr>
+              <td>SATURN</td><td>4</td>
+              <td class="red">100% 连接错误</td>
+              <td><span class="tag tag-red">严重</span></td>
+            </tr>
+          </tbody>
+        </table>
 
-    <div class="rec-card" style="border-top:3px solid var(--blue);">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
-        <span class="tag tag-blue">P2 &middot; 改善</span>
+        <div class="callout callout-red mt-1">
+          <span class="callout-icon">⚠</span>
+          <strong>Cookie</strong>（报告最多）和 <strong>White Truffle</strong> 的首要问题都是连接错误——这是基础设施层面的问题，不是模型本身的能力问题。<strong>Green Apple</strong> 则是典型的模型能力问题：重复、忽视人设、thinking tag 泄漏说明 prompt engineering 和 post-processing 需要改进。<strong>VENUS 和 SATURN 完全不可用</strong>（100% 连接错误），应立即下线或修复。
+        </div>
+
+        <div class="divider"></div>
+
+        <h4>用户原声</h4>
+        <div class="card mt-1">
+          <p class="body" style="font-style:italic;">"I want to re subscribe but it doesn't allow me to"</p>
+          <p class="detail mt-1">——用户想付费却付不了，这是最不该发生的流失。订阅/计费问题占 Bug 报告的 12%，是纯粹的收入漏洞。</p>
+        </div>
+        <div class="card mt-1">
+          <p class="body" style="font-style:italic;">"My subscription stopped, even though I didn't cancel"</p>
+          <p class="detail mt-1">——非自愿流失。用户没有主动取消，但订阅莫名中断。这类问题可能被误归为"自然流失"而被忽视。</p>
+        </div>
+        <div class="card mt-1">
+          <p class="body" style="font-style:italic;">"性格總是帶有強烈的自戀型人格障礙傾向"</p>
+          <p class="detail mt-1">——Green Apple 模型的角色一致性问题。RP 用户对角色心理特征极度敏感，模型默认的"自恋"倾向严重破坏角色设定。</p>
+        </div>
       </div>
-      <h4>续费挽留机制</h4>
-      <ul class="bullets">
-        <li>Cancel flow 提示 "你的订阅将在 X 日到期，此前仍可使用所有功能"</li>
-        <li>到期前 3 天推送<strong>最佳体验回忆</strong>——"你在这 30 天里创造了 XX 个故事，与 XX 角色相伴了 XX 小时"</li>
-        <li>提供 "到期取消" 替代 "立即取消" 选项，降低用户的续费焦虑</li>
-        <li>对 37% 稳定但仍取消的 D31 用户，测试<strong>价格弹性</strong>（折扣挽留）</li>
-      </ul>
-      <p class="detail mt-1" style="color:var(--blue);"><strong>理由：</strong>D0-3 群体的"取消"主要是订阅管理行为。优化 cancel flow 可以低成本地提升续费率。</p>
     </div>
   </div>
 </div>
 
-<!-- ═══ 10 CLOSING ═══ -->
-<div class="slide cover" data-slide="10">
-  <div class="anim">
-    <p class="slide-num">核心结论</p>
-    <h1>留存的关键：<br><i>找到"自己的 Bot" + 低错误率</i></h1>
-    <p class="lead mt-2">留存用户的教科书模式：<strong>首日大量探索 &rarr; 首周找到 1-3 个核心 Bot &rarr; 长期反复使用。</strong><br>整个过程中错误率保持在 1% 以下，形成稳定的情感连接。</p>
+<!-- ========== SLIDE 13 ========== -->
+<div class="slide" data-slide="13">
+  <div class="slide-num">13 — 行动建议</div>
+  <h2>三个优先级，<i>一个目标</i></h2>
+  <p class="lead">所有行动指向同一个目标：让 D31 用户走上 Retained 用户的路径——快速找到匹配的 Bot，在低错误率环境中深度使用。</p>
+
+  <div class="grid-3 mt-2">
+    <div class="rec-card">
+      <span class="tag tag-red">P0 紧急</span>
+      <h4 class="mt-1">错误率治理：从 28% 降到 15%</h4>
+      <div class="body mt-1">
+        <p><strong>问题本质：</strong><span class="mono">receive_timeout</span> 和 <span class="mono">receive_error</span> 是两大主要错误类型，集中发生在长上下文 RP 场景。95% 的 D31 用户遭遇过错误，28% 的用户错误率 >5%。</p>
+        <ul class="bullets mt-1">
+          <li><strong>Android 优先：</strong>92.6% 的 Bug 来自 Android。优先排查 Android 客户端的连接管理、重连机制和超时处理。</li>
+          <li><strong>模型专项修复：</strong>Cookie 连接错误 25.9%——排查推理服务负载均衡；Green Apple 重复/OOC——优化 prompt 和采样策略；White Truffle 连接 31.4% + 过度审查 6.6%——基础设施 + 安全策略双修。</li>
+          <li><strong>VENUS / SATURN 立即处理：</strong>100% 连接错误，应下线或紧急修复，避免新用户首次体验即遭遇不可用模型。</li>
+          <li><strong>目标：</strong>>5% 错误率用户占比从 28% 降至 15%，预计可挽回 10-15% 的 D31 流失。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="rec-card">
+      <span class="tag tag-amber">P1 重要</span>
+      <h4 class="mt-1">Bot 推荐：从 107 次探索到首周锁定</h4>
+      <div class="body mt-1">
+        <p><strong>问题本质：</strong>D31 中位探索 107 个 Bot 但 69% 的对话集中在 Top-3。大量探索 ≠ 找到匹配，而是匹配效率低下的信号。VR 用户浏览 803 个 Bot 仍未找到"命中"角色。</p>
+        <ul class="bullets mt-1">
+          <li><strong>首周主动推荐：</strong>基于用户前 5 次对话的题材、语言、交互风格，在 D+1 到 D+7 主动推送高匹配 Bot。目标：将"找到核心 Bot"的时间从 2 周压缩到 3 天。</li>
+          <li><strong>"Bot-User 匹配度"指标：</strong>定义为深度对话（>50 条消息）占比 × 回访率，而非简单的点击率。只有产生深度对话的推荐才是有效推荐。</li>
+          <li><strong>修复人设/记忆问题：</strong>模型反馈中"忽视人设"2.3%、"记忆丢失"5.2%——这些问题会让用户对已匹配的 Bot 失去信任。推荐再准，角色崩塌也白搭。</li>
+          <li><strong>目标：</strong>D+7 内至少 1 个深度对话（>50 条消息）的用户占比提升 20%。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="rec-card">
+      <span class="tag tag-blue">P2 战略</span>
+      <h4 class="mt-1">续费挽回：抓住 37% 稳定但流失的用户</h4>
+      <div class="body mt-1">
+        <p><strong>问题本质：</strong>37% 的 D31 用户使用量基本稳定却仍未续费，说明流失不是因为产品价值消失，而是续费决策环节出了问题——可能是价格、流程、或缺乏触发。</p>
+        <ul class="bullets mt-1">
+          <li><strong>取消流程优化：</strong>在取消确认页展示用户数据——"你与 Bot X 共创了 2,340 条消息的故事，确定要离开吗？"用情感投入唤起续费动机。</li>
+          <li><strong>到期前 3 天故事回顾：</strong>自动生成用户的"故事摘要"——精选角色互动高光片段，提醒用户平台上有他们舍不得的东西。</li>
+          <li><strong>"到期取消"选项：</strong>提供"继续使用到期末再取消"的选项，避免因冲动取消导致的即时流失。给用户缓冲期，让产品有更多时间证明价值。</li>
+          <li><strong>价格弹性测试：</strong>针对 37% 稳定但流失人群，A/B 测试折扣续费（如首月 7 折），验证价格敏感度。如果价格是主因，灵活定价可直接提升续费率。</li>
+        </ul>
+      </div>
+    </div>
   </div>
-  <div class="row mt-3 anim" style="max-width:700px;gap:3rem;">
-    <div class="card" style="text-align:center;flex:1;">
-      <p class="big-num" style="color:var(--green);">47%</p>
-      <p class="detail mt-1">留存用户 Top-3 Bot 集中度<br>——他们找到了"根据地"</p>
-    </div>
-    <div class="card" style="text-align:center;flex:1;">
-      <p class="big-num" style="color:var(--green);">0.4%</p>
-      <p class="detail mt-1">教科书用户错误率<br>——几乎无感的技术体验</p>
-    </div>
-    <div class="card" style="text-align:center;flex:1;">
-      <p class="big-num" style="color:var(--green);">85d+</p>
-      <p class="detail mt-1">并且仍在续费<br>——这就是 PMF 的样子</p>
-    </div>
-  </div>
-  <p class="caption anim mt-3">Emochi Data Team &middot; 2026-04-02 &middot; 数据截至 2026-03-31</p>
 </div>
+
+<!-- ========== SLIDE 14 ========== -->
+<div class="slide cover" data-slide="14">
+  <div class="slide-num">14 — 结论</div>
+  <h2 class="serif" style="font-size:2.4rem;line-height:1.3;">留存的关键：<br><i>找到"自己的 Bot" + 低错误率</i></h2>
+
+  <div class="divider mt-2"></div>
+
+  <div class="row mt-2">
+    <div class="col">
+      <div class="card-warm">
+        <h4>Retained 用户的路径公式</h4>
+        <p class="body mt-1"><strong>Day 1</strong> 探索多个 Bot，快速浏览</p>
+        <p class="body"><strong>Week 1</strong> 锁定 1–3 个深度匹配的核心 Bot</p>
+        <p class="body"><strong>长期</strong> 进入深度沉浸式使用，故事持续推进</p>
+        <div class="divider mt-1"></div>
+        <div class="grid-3 mt-1" style="text-align:center;">
+          <div>
+            <div class="big-num">47%</div>
+            <p class="caption">Top-3 Bot 对话集中度</p>
+          </div>
+          <div>
+            <div class="big-num">0.4%</div>
+            <p class="caption">错误率</p>
+          </div>
+          <div>
+            <div class="big-num">85d+</div>
+            <p class="caption">持续使用天数</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card" style="border-color: var(--red, #c0392b);">
+        <h4>D31 的悖论</h4>
+        <p class="body mt-1">D31 用户使用量<strong>更高</strong>，付费模型使用率<strong>更高</strong>，对话深度<strong>更深</strong>——他们本应是最好的用户。</p>
+        <div class="mt-1">
+          <p class="body">但是——</p>
+          <p class="body mt-1"><span class="big-num-sm red">95%</span> <span class="body">遭遇过错误</span></p>
+          <p class="body mt-1"><span class="big-num-sm red">69%</span> <span class="body">从未找到深度匹配的 Bot</span></p>
+        </div>
+        <div class="callout callout-red mt-1">
+          <span class="callout-icon">⚠</span>
+          修复这两件事，D31 就会变成你最好的客户。他们已经证明了付费意愿和使用深度——我们只需要不再辜负他们。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-2" style="text-align:center;">
+    <p class="detail" style="opacity:0.6;">Emochi Data Team · 2026-04-02 · 数据截至 2026-03-31</p>
+  </div>
+</div>
+
 
 </div><!-- /deck -->
 
